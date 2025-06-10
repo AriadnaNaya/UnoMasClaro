@@ -233,9 +233,10 @@ public class PatronesIntegradosDemo {
         }
         
         @Override
-        public void update(Partido partido, String estadoNuevo, String mensaje) {
+        public void update(Partido partido) {
             contadorNotificaciones++;
-            System.out.println("       " + nombre + " notificado: " + estadoNuevo);
+            String estadoActual = partido.getEstado().getClass().getSimpleName();
+            System.out.println("       " + nombre + " notificado: " + estadoActual);
         }
     }
 } 

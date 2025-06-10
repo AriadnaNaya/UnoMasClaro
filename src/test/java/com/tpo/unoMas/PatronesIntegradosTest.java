@@ -290,7 +290,7 @@ public class PatronesIntegradosTest {
         }
         
         @Override
-        public void update(Partido partido, String estadoNuevo, String mensaje) {
+        public void update(Partido partido) {
             notificaciones++;
         }
     }

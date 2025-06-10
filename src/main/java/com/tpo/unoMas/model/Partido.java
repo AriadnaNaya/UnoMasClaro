@@ -136,10 +136,10 @@ public class Partido implements Observable {
     }
 
     @Override
-    public void notifyObservers(String estadoNuevo, String mensaje) {
+    public void notifyObservers() {
         if (observers != null) {
             for (Observer observer : observers) {
-                observer.update(this, estadoNuevo, mensaje);
+                observer.update(this);
             }
         }
     }
@@ -185,7 +185,7 @@ public class Partido implements Observable {
         Objects.requireNonNull(nuevoEstado, "El nuevo estado no puede ser null");
         this.estado = nuevoEstado;
 
-        notifyObservers(nuevoEstado.getClass().getSimpleName(),this.estado.armarMensaje());
+        notifyObservers();
 
     }
 
@@ -197,6 +197,8 @@ public class Partido implements Observable {
     public boolean estaEnElFuturo() {
         return fechaHora.isAfter(LocalDateTime.now());
     }
+
+
 
     public void confirmarAsistencia(Jugador jugador) {
         if (!jugadores.contains(jugador))

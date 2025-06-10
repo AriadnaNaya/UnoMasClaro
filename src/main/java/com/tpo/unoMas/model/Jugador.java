@@ -1,7 +1,8 @@
 package com.tpo.unoMas.model;
 
-import com.tpo.unoMas.model.strategy.jugador.EstrategiaEmparejamiento;
-import com.tpo.unoMas.model.strategy.jugador.EstrategiaPorNivel;
+// Imports comentados - estas clases ya no se usan
+// import com.tpo.unoMas.model.strategy.jugador.EstrategiaEmparejamiento;
+// import com.tpo.unoMas.model.strategy.jugador.EstrategiaPorNivel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.util.List;
@@ -41,6 +42,17 @@ public class Jugador {
     @JoinColumn(name = "zona_id", nullable = false)
     private Zona zona;
 
+    @ManyToOne
+    @JoinColumn(name = "deporte_favorito_id")
+    private Deporte deporteFavorito;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "nivel")
+    private Nivel nivel;
+
+    @Column(name = "telefono", length = 20)
+    private String telefono;
+
     @OneToMany(mappedBy = "jugador", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DeporteJugador> deportes = new ArrayList<>();
 
@@ -55,11 +67,12 @@ public class Jugador {
     )
     private Set<Partido> partidosParticipados = new HashSet<>();
 
-    @Transient
-    private EstrategiaEmparejamiento estrategiaEmparejamiento;
+    // Campo comentado - ya no se usa este patrón Strategy en Jugador
+    // @Transient
+    // private EstrategiaEmparejamiento estrategiaEmparejamiento;
 
     public Jugador() {
-        this.estrategiaEmparejamiento = new EstrategiaPorNivel(); // Estrategia por defecto
+        // this.estrategiaEmparejamiento = new EstrategiaPorNivel(); // Estrategia por defecto
     }
     public Jugador(String nombre, String email, String password, Zona zona) {
         this.nombre = nombre;
@@ -68,11 +81,11 @@ public class Jugador {
         this.zona = zona;
     }
 
-    // Strategy Jugador
+    // Strategy Jugador - métodos comentados ya no se usan
 
-    public void cambiarEstrategiaEmparejamiento(EstrategiaEmparejamiento estrategia) {
-        this.estrategiaEmparejamiento = Objects.requireNonNull(estrategia, "La estrategia no puede ser null");
-    }
+    // public void cambiarEstrategiaEmparejamiento(EstrategiaEmparejamiento estrategia) {
+    //     this.estrategiaEmparejamiento = Objects.requireNonNull(estrategia, "La estrategia no puede ser null");
+    // }
 
     // State Jugador
     public void agregarPartido(Partido partido) {
@@ -131,6 +144,30 @@ public class Jugador {
         this.zona = zona;
     }
 
+    public Deporte getDeporteFavorito() {
+        return deporteFavorito;
+    }
+
+    public void setDeporteFavorito(Deporte deporteFavorito) {
+        this.deporteFavorito = deporteFavorito;
+    }
+
+    public Nivel getNivel() {
+        return nivel;
+    }
+
+    public void setNivel(Nivel nivel) {
+        this.nivel = nivel;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
     public List<DeporteJugador> getDeportes() {
         return deportes;
     }
@@ -155,7 +192,7 @@ public class Jugador {
         this.partidosParticipados = partidosParticipados;
     }
 
-    public EstrategiaEmparejamiento getEstrategiaEmparejamiento() {
-        return estrategiaEmparejamiento;
-    }
+    // public EstrategiaEmparejamiento getEstrategiaEmparejamiento() {
+    //     return estrategiaEmparejamiento;
+    // }
 }

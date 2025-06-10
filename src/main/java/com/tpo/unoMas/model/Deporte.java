@@ -30,6 +30,9 @@ public class Deporte {
     @OneToMany(mappedBy = "deporte", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Partido> partidos = new ArrayList<>();
 
+    // Constructor vacío requerido por JPA
+    public Deporte() {}
+
     public Deporte(String nombre, String descripcion) {
         this.nombre = nombre;
         this.descripcion = descripcion;

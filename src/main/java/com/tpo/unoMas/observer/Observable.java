@@ -4,5 +4,5 @@ package com.tpo.unoMas.observer;
 public interface Observable {
     void attach(Observer observer);
     void detach(Observer observer);
-    void notifyObservers(String estadoNuevo, String mensaje);
+    void notifyObservers();
 }

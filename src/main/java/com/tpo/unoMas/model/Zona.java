@@ -23,6 +23,9 @@ public class Zona {
     private Ubicacion ubicacion;
 
 
+    // Constructor vacío requerido por JPA
+    public Zona() {}
+
     public Zona(String barrio, String partido, Ubicacion ubicacion) {
         this.barrio = barrio;
         this.partido = partido;
@@ -55,5 +58,12 @@ public class Zona {
 
     public void setUbicacion(Ubicacion ubicacion) {
         this.ubicacion = ubicacion;
+    }
+
+    /**
+     * Método helper para obtener el nombre completo de la zona
+     */
+    public String getNombre() {
+        return barrio + ", " + partido;
     }
 }

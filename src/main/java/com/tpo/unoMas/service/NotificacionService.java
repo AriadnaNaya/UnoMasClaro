@@ -18,11 +18,11 @@ public class NotificacionService implements Observer {
     }
 
     @Override
-    public void update(Partido partido, String estadoNuevo, String mensaje) {
+    public void update(Partido partido) {
         String titulo = String.format("Partido %s: Cambio a %s",
-                partido.getTitulo(), estadoNuevo);
+                partido.getTitulo(), partido.getEstado().getClass().getSimpleName());
 
-        notificarConTitulo(partido, titulo, mensaje);
+        notificarConTitulo(partido, titulo, partido.getEstado().armarMensaje());
     }
 
     public void notificarConTitulo(Partido partido, String titulo, String mensaje) {

@@ -1,19 +1,17 @@
 package com.tpo.unoMas.config;
 
-import java.util.Base64;
-
-import javax.crypto.SecretKey;
+// import java.util.Base64;
+// import javax.crypto.SecretKey;
+// import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+// import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+// import io.jsonwebtoken.SignatureAlgorithm;
+// import io.jsonwebtoken.security.Keys;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 
 @Configuration
 @EnableWebSecurity
@@ -23,12 +21,14 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 	    http.csrf(csrf -> csrf.disable()) // útil si estás usando Postman
         .authorizeHttpRequests(authz -> authz
-            .requestMatchers("/api/clientes").permitAll()
-            .anyRequest().authenticated())
-        .addFilterBefore(jwtAuth(), UsernamePasswordAuthenticationFilter.class);
+            .anyRequest().permitAll()); // Sin autenticación - Acceso libre a todos los endpoints
     return http.build();
 	}
 
+	// AUTENTICACIÓN JWT DESACTIVADA
+	// Descomenta estos métodos cuando quieras activar autenticación
+	
+	/*
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
 		return (web) -> web.ignoring().requestMatchers("saludos/hola", "auth/login");
@@ -50,4 +50,5 @@ public class SecurityConfig {
 
 		return secretKey;
 	}
+	*/
 }

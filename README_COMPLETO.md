@@ -35,16 +35,10 @@
 
 ### 📊 Flujo de Estados (State Pattern)
 
-```mermaid
-graph LR
-    A[NecesitamosJugadores] --> B[PartidoArmado]
-    B --> C[Confirmado]
-    C --> D[EnJuego]
-    D --> E[Finalizado]
-    
-    A --> F[Cancelado]
-    B --> F
-    C --> F
+```
+NecesitamosJugadores → PartidoArmado → Confirmado → EnJuego → Finalizado
+                  ↘               ↘          ↘
+                    Cancelado     Cancelado   Cancelado
 ```
 
 **Estados implementados:**
@@ -56,13 +50,6 @@ graph LR
 - **❌ Cancelado**: Partido cancelado
 
 ## 🌐 API REST - Endpoints
-
-### 📊 Swagger Documentation
-
-La documentación interactiva está disponible en:
-```
-http://localhost:8080/swagger-ui.html
-```
 
 ### 🎮 Controllers
 
@@ -100,7 +87,7 @@ http://localhost:8080/swagger-ui.html
 | `GET` | `/api/configuracion/niveles` | Listar niveles de habilidad |
 | `POST` | `/api/configuracion/datos-prueba` | Crear datos de prueba |
 
-## 📝 Ejemplos de Uso
+## 📝 Ejemplos de Uso con Swagger
 
 ### 🏃 1. Crear Datos de Prueba
 
@@ -121,6 +108,7 @@ POST /api/configuracion/datos-prueba
 
 ```bash
 POST /api/jugadores/registro
+Content-Type: application/json
 ```
 
 **Request Body:**
@@ -156,6 +144,7 @@ POST /api/jugadores/registro
 
 ```bash
 POST /api/partidos
+Content-Type: application/json
 ```
 
 **Request Body:**
@@ -206,6 +195,7 @@ POST /api/partidos
 
 ```bash
 POST /api/partidos/buscar
+Content-Type: application/json
 ```
 
 **Request Body:**
@@ -217,6 +207,24 @@ POST /api/partidos/buscar
   "soloConEspaciosDisponibles": true,
   "fechaDesde": "2024-06-15T00:00:00",
   "fechaHasta": "2024-06-16T23:59:59"
+}
+```
+
+**Respuesta:**
+```json
+{
+  "partidos": [
+    {
+      "id": 1,
+      "titulo": "Fútbol 5 del Viernes",
+      "fechaHora": "2024-06-15T19:00:00",
+      "zona": "Palermo, CABA",
+      "deporte": "Fútbol",
+      "estado": "NecesitamosJugadores",
+      "jugadoresNecesarios": 9
+    }
+  ],
+  "cantidad": 1
 }
 ```
 
@@ -421,8 +429,7 @@ java -jar target/unoMas-0.0.1-SNAPSHOT.jar
 ### 🌐 URLs de Acceso
 
 - **API Base**: `http://localhost:8080/api`
-- **Swagger UI**: `http://localhost:8080/swagger-ui.html`
-- **H2 Console**: `http://localhost:8080/h2-console` (si se usa H2)
+- **Actuator**: `http://localhost:8080/actuator/health`
 
 ## 🧪 Testing
 
@@ -487,6 +494,78 @@ src/
 └── test/                       # Unit & Integration Tests
 ```
 
+## 🎯 Características Técnicas
+
+### 🔧 Patrones de Diseño Implementados
+
+#### 1. **State Pattern** 
+- **Ubicación**: `com.tpo.unoMas.model.estado`
+- **Propósito**: Gestionar el ciclo de vida de partidos
+- **Estados**: NecesitamosJugadores, PartidoArmado, Confirmado, EnJuego, Finalizado, Cancelado
+
+#### 2. **Observer Pattern**
+- **Ubicación**: `com.tpo.unoMas.observer`
+- **Propósito**: Notificaciones automáticas de cambios
+- **Implementación**: Partido como Observable, InvitacionService como Observer
+
+#### 3. **Strategy Pattern**
+- **Ubicación**: `com.tpo.unoMas.model.strategy.emparejamiento`
+- **Propósito**: Algoritmos intercambiables de emparejamiento
+- **Estrategias**: PorCercania, PorNivel, PorHistorial
+
+#### 4. **Adapter Pattern**
+- **Ubicación**: `com.tpo.unoMas.model.adapter`
+- **Propósito**: Integración unificada de servicios de notificación
+- **Adaptadores**: NotificacionEmailAdapter, AdapterJavaMail
+
+### 🛡️ Validaciones y Seguridad
+
+- ✅ **Bean Validation** con anotaciones Jakarta
+- ✅ **CORS** habilitado para desarrollo
+- ✅ **Exception Handling** centralizado
+- ✅ **Input Sanitization** en DTOs
+
+### 📊 Base de Datos
+
+**Entidades principales:**
+- `jugadores` - Información de usuarios
+- `partidos` - Partidos deportivos
+- `zonas` - Ubicaciones geográficas
+- `deportes` - Tipos de deportes
+- `notificaciones` - Historial de notificaciones
+
+## 💡 Casos de Uso Avanzados
+
+### 🎯 Configuración de Estrategias
+
+```java
+// Cambiar estrategia por defecto del sistema
+InvitacionService invitacionService = new InvitacionService();
+invitacionService.setEstrategiaDefecto(new EmparejamientoPorNivel());
+
+// Enviar invitaciones con estrategia específica
+List<Jugador> invitados = invitacionService.enviarInvitaciones(
+    partido, 
+    jugadoresRegistrados, 
+    new EmparejamientoPorCercania()
+);
+```
+
+### 📱 Configuración de Notificaciones
+
+```java
+// Cambiar canal de notificación en tiempo real
+NotificacionService notificacionService = new NotificacionService();
+notificacionService.cambiarEstrategiaNotificacion(new NotificacionPushFirebase());
+
+// Notificación personalizada
+notificacionService.notificarConTitulo(
+    partido, 
+    "¡Partido confirmado!", 
+    "Tu partido está listo para empezar"
+);
+```
+
 ## 🤝 Contribución
 
 1. **Fork** el proyecto
@@ -498,16 +577,6 @@ src/
 ## 📄 Licencia
 
 Este proyecto está bajo la licencia MIT. Ver `LICENSE` para más detalles.
-
-## 👥 Autores
-
-- **Tu Nombre** - *Desarrollo inicial* - [@tuusuario](https://github.com/tuusuario)
-
-## 🙏 Agradecimientos
-
-- Implementación de patrones de diseño según especificaciones del TPO
-- Spring Boot framework y comunidad
-- Documentación de referencia de patrones de diseño
 
 ---
 

@@ -10,6 +10,8 @@ public class Ubicacion {
     @Column(name = "longitud", nullable = false, precision = 10, scale = 7)
     private Double longitud;     // ejemplo:  -58.3815591
 
+    // Constructor vacío requerido por JPA
+    public Ubicacion() {}
 
     public Double getLatitud() {
         return latitud;
