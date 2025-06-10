@@ -20,7 +20,7 @@ public class NotificacionService implements Observer {
 
     @Override
     public void update(Partido partido, String estadoNuevo, String mensaje) {
-        String titulo = String.format("Partido %s: %s → %s",
+        String titulo = String.format("Partido %s: Cambio a %s",
                 partido.getTitulo(), estadoNuevo);
 
         notificarConTitulo(partido, titulo, mensaje);
