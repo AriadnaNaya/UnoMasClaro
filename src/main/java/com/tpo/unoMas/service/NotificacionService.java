@@ -2,8 +2,7 @@ package com.tpo.unoMas.service;
 
 import com.tpo.unoMas.model.Notificacion;
 import com.tpo.unoMas.model.Partido;
-import com.tpo.unoMas.model.strategy.INotificacionStrategy;
-import org.springframework.beans.factory.annotation.Qualifier;
+import com.tpo.unoMas.model.strategy.notificacion.INotificacionStrategy;
 import org.springframework.stereotype.Service;
 
 import com.tpo.unoMas.observer.Observer;

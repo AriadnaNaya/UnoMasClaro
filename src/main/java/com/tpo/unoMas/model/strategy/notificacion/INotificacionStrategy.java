@@ -1,4 +1,4 @@
-package com.tpo.unoMas.model.strategy;
+package com.tpo.unoMas.model.strategy.notificacion;
 
 import com.tpo.unoMas.model.Notificacion;
 

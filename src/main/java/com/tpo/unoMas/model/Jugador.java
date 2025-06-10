@@ -1,5 +1,7 @@
 package com.tpo.unoMas.model;
 
+import com.tpo.unoMas.model.strategy.jugador.EstrategiaEmparejamiento;
+import com.tpo.unoMas.model.strategy.jugador.EstrategiaPorNivel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.util.List;
@@ -53,14 +55,23 @@ public class Jugador {
     )
     private Set<Partido> partidosParticipados = new HashSet<>();
 
-    public Jugador() {
-    }
+    @Transient
+    private EstrategiaEmparejamiento estrategiaEmparejamiento;
 
+    public Jugador() {
+        this.estrategiaEmparejamiento = new EstrategiaPorNivel(); // Estrategia por defecto
+    }
     public Jugador(String nombre, String email, String password, Zona zona) {
         this.nombre = nombre;
         this.email = email;
         this.password = password;
         this.zona = zona;
+    }
+
+    // Strategy Jugador
+
+    public void cambiarEstrategiaEmparejamiento(EstrategiaEmparejamiento estrategia) {
+        this.estrategiaEmparejamiento = Objects.requireNonNull(estrategia, "La estrategia no puede ser null");
     }
 
     // State Jugador
@@ -142,5 +153,9 @@ public class Jugador {
 
     public void setPartidosParticipados(Set<Partido> partidosParticipados) {
         this.partidosParticipados = partidosParticipados;
+    }
+
+    public EstrategiaEmparejamiento getEstrategiaEmparejamiento() {
+        return estrategiaEmparejamiento;
     }
 }

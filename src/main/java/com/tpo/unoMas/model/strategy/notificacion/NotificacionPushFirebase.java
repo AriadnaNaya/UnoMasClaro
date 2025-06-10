@@ -1,4 +1,4 @@
-package com.tpo.unoMas.model.strategy;
+package com.tpo.unoMas.model.strategy.notificacion;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.FirebaseMessaging;
