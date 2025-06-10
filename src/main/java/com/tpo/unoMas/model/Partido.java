@@ -2,18 +2,17 @@ package com.tpo.unoMas.model;
 
 import com.tpo.unoMas.model.estado.EstadoPartido;
 import com.tpo.unoMas.model.estado.NecesitamosJugadores;
+import com.tpo.unoMas.observer.Observable;
+import com.tpo.unoMas.observer.Observer;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import jakarta.validation.constraints.*;
 
 @Entity
 @Table(name = "partidos")
-public class Partido  {
+public class Partido implements Observable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -76,16 +75,21 @@ public class Partido  {
     )
     private Set<Jugador> jugadoresConfirmados = new HashSet<>();
 
+    @Transient
+    private List<Observer> observers;
+
 
     // Constructores
     public Partido() {
         this.jugadores = new HashSet<>();
         this.jugadoresConfirmados = new HashSet<>();
         this.estado = new NecesitamosJugadores();
+        this.observers = new ArrayList<>();
     }
 
     public Partido(String nombre, String descripcion, LocalDateTime fechaHora,
                    Integer minJugadores, Integer maxJugadores, Zona zona) {
+        this.titulo=nombre;
         this.fechaHora = fechaHora;
         this.minJugadores = minJugadores;
         this.maxJugadores = maxJugadores;
@@ -112,6 +116,31 @@ public class Partido  {
             this.estado.removerJugador(this, jugador);
         } else {
             throw new IllegalStateException("No se puede remover jugador sin un estado definido");
+        }
+    }
+
+    //    Observer - Partido
+    @Override
+    public void attach(Observer observer) {
+        if (observers == null) {
+            observers = new ArrayList<>();
+        }
+        observers.add(observer);
+    }
+
+    @Override
+    public void detach(Observer observer) {
+        if (observers != null) {
+            observers.remove(observer);
+        }
+    }
+
+    @Override
+    public void notifyObservers(String estadoNuevo, String mensaje) {
+        if (observers != null) {
+            for (Observer observer : observers) {
+                observer.update(this, estadoNuevo, mensaje);
+            }
         }
     }
 
@@ -155,6 +184,8 @@ public class Partido  {
     public void cambiarEstado(EstadoPartido nuevoEstado) {
         Objects.requireNonNull(nuevoEstado, "El nuevo estado no puede ser null");
         this.estado = nuevoEstado;
+
+        notifyObservers(nuevoEstado.getClass().getSimpleName(),this.estado.armarMensaje());
 
     }
 
@@ -296,4 +327,5 @@ public class Partido  {
                 ", estado=" + estado +
                 '}';
     }
+
 }

@@ -34,4 +34,9 @@ public class Cancelado extends EstadoPartido{
         throw new IllegalStateException("El partido ya está cancelado");
     }
 
+    @Override
+    public String armarMensaje() {
+        return "El Partido ha sido cancelado";
+    }
+
 }

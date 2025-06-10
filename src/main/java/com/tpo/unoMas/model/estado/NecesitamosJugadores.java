@@ -42,4 +42,9 @@ public class NecesitamosJugadores extends EstadoPartido {
     public void cancelarPartido(Partido partido) {
         throw new IllegalStateException("No se puede confirmar un partido que aún necesita jugadores");
     }
+
+    @Override
+    public String armarMensaje() {
+        return "El Partido ha sido creado";
+    }
 }

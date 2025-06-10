@@ -43,4 +43,9 @@ public class Confirmado extends EstadoPartido{
     public void cancelarPartido(Partido partido) {
         partido.cambiarEstado(new Cancelado());
     }
+
+    @Override
+    public String armarMensaje() {
+        return "El Partido ha sido confirmado";
+    }
 }

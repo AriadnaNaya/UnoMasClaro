@@ -36,4 +36,9 @@ public class Finalizado extends EstadoPartido{
         throw new IllegalStateException("No se puede cancelar un partido finalizado");
     }
 
+    @Override
+    public String armarMensaje() {
+        return "El Partido ha finalizado";
+    }
+
 }

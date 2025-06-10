@@ -56,4 +56,9 @@ public class PartidoArmado extends EstadoPartido {
     public void cancelarPartido(Partido partido) {
         partido.cambiarEstado(new Cancelado());
     }
+
+    @Override
+    public String armarMensaje() {
+        return "Tu Partido ya esta listo, hora de confirmar asistencia!!";
+    }
 }

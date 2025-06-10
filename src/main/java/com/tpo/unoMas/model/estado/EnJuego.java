@@ -37,4 +37,9 @@ public class EnJuego extends EstadoPartido{
         partido.cambiarEstado(new Cancelado());
     }
 
+    @Override
+    public String armarMensaje() {
+        return "Ha comenzado el partido!!";
+    }
+
 }
