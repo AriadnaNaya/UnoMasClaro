@@ -33,9 +33,9 @@ public class InvitacionService implements Observer {
      * Envía invitaciones automáticamente cuando se crea un nuevo partido
      */
     @Override
-    public void update(Partido partido, String estadoNuevo, String mensaje) {
+    public void update(Partido partido) {
         // Solo enviar invitaciones cuando se crea el partido (estado inicial)
-        if ("NecesitamosJugadores".equals(estadoNuevo)) {
+        if ("NecesitamosJugadores".equals(partido.getEstado().getClass().getSimpleName())) {
             System.out.println("🎯 PARTIDO CREADO - Activando sistema de invitaciones automáticas");
             enviarInvitacionesAutomaticas(partido);
         }
