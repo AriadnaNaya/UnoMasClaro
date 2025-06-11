@@ -30,22 +30,17 @@ public class EmparejamientoPorHistorial implements EstrategiaEmparejamiento {
      * Verifica si el jugador tiene historial relevante para el partido
      */
     private boolean tieneHistorialRelevante(Jugador jugador, Partido partido) {
-        // Criterio 1: Ha jugado en la misma zona anteriormente
-        boolean haJugadoEnZona = jugador.getPartidosParticipados().stream()
-                .anyMatch(p -> p.getZona() != null && 
-                              partido.getZona() != null && 
-                              p.getZona().getPartido().equals(partido.getZona().getPartido()));
-        
-        // Criterio 2: Ha jugado con el organizador anteriormente
+
+        // Criterio 1: Ha jugado con el organizador anteriormente
         boolean haJugadoConOrganizador = jugador.getPartidosParticipados().stream()
                 .anyMatch(p -> p.getJugadores().contains(partido.getOrganizador()) ||
                               p.getOrganizador().equals(partido.getOrganizador()));
         
-        // Criterio 3: Ha organizado partidos del mismo deporte
+        // Criterio 2: Ha organizado partidos del mismo deporte
         boolean haOrganizadoMismoDeporte = jugador.getPartidosOrganizados().stream()
                 .anyMatch(p -> p.getDeporte().equals(partido.getDeporte()));
         
-        return haJugadoEnZona || haJugadoConOrganizador || haOrganizadoMismoDeporte;
+        return  haJugadoConOrganizador || haOrganizadoMismoDeporte;
     }
     
     /**

@@ -27,6 +27,11 @@ public class EmparejamientoPorNivel implements EstrategiaEmparejamiento {
     public String getDescripcion() {
         return "Busca jugadores con nivel de habilidad compatible al del partido";
     }
+
+    @Override
+    public boolean esCompatible(Partido partido, Jugador jugador) {
+        return esJugadorCompatible(jugador, partido) && tieneNivelCompatible(jugador, partido);
+    }
     
     /**
      * Verifica si el jugador tiene nivel compatible con el partido
@@ -48,11 +53,8 @@ public class EmparejamientoPorNivel implements EstrategiaEmparejamiento {
             return false; // No practica el deporte
         }
         
-        // Estrategia: permitir jugadores del mismo nivel o hasta 1 nivel de diferencia
-        int diferenciaMaxima = 1;
-        int diferencia = Math.abs(nivelJugador.ordinal() - nivelPartido.ordinal());
-        
-        return diferencia <= diferenciaMaxima;
+        // Solo permite jugadores con nivel igual o superior al del partido
+        return nivelJugador.ordinal() >= nivelPartido.ordinal();
     }
     
     /**
@@ -72,8 +74,4 @@ public class EmparejamientoPorNivel implements EstrategiaEmparejamiento {
         return practicaDeporte && noEsOrganizador && noEstaEnPartido;
     }
 
-    @Override
-    public boolean esCompatible(Partido partido, Jugador jugador) {
-        return esJugadorCompatible(jugador, partido) && tieneNivelCompatible(jugador, partido);
-    }
 } 
