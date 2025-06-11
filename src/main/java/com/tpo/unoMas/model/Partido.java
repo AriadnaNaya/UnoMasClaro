@@ -321,4 +321,20 @@ public class Partido implements Observable {
                 '}';
     }
 
+    public PartidoDTO convertirADTO() {
+        PartidoDTO dto = new PartidoDTO();
+        dto.setId(this.id);
+        dto.setTitulo(this.titulo);
+        dto.setFechaHora(this.fechaHora);
+        dto.setZonaDTO(this.zona != null ? this.zona.convertirADTO() : null);
+        dto.setDeporteDTO(this.deporte != null ? this.deporte.convertirADTO() : null);
+        dto.setNivel(this.nivel);
+        dto.setOrganizadorDTO(this.organizador != null ? this.organizador.convertirADTO() : null);
+        dto.setDuracionMinutos(this.duracionMinutos);
+        dto.setEstado(this.estado != null ? this.estado.getClass().getSimpleName() : null);
+        dto.setJugadoresNecesarios(this.deporte != null ? this.deporte.getCantidadJugadores() - this.jugadores.size() : 0);
+        dto.setJugadores(this.jugadores.stream().map(Jugador::convertirADTO).toList());
+        return dto;
+    }
+
 }

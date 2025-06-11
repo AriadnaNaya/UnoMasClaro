@@ -10,11 +10,11 @@ public class Zona {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /** Nombre del barrio (e.g. “Palermo”). */
+    /** Nombre del barrio (e.g. "Palermo"). */
     @Column(nullable = false, length = 120)
     private String barrio;
 
-    /** Nombre del partido (e.g. “CABA” o “La Matanza”). */
+    /** Nombre del partido (e.g. "CABA" o "La Matanza"). */
     @Column(nullable = false, length = 120)
     private String partido;
 
@@ -65,5 +65,17 @@ public class Zona {
      */
     public String getNombre() {
         return barrio + ", " + partido;
+    }
+
+    public ZonaDTO convertirADTO() {
+        ZonaDTO dto = new ZonaDTO();
+        dto.setId(this.id);
+        dto.setBarrio(this.barrio);
+        dto.setPartido(this.partido);
+        if (this.ubicacion != null) {
+            dto.setLatitud(this.ubicacion.getLatitud());
+            dto.setLongitud(this.ubicacion.getLongitud());
+        }
+        return dto;
     }
 }

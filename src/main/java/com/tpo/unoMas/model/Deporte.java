@@ -58,6 +58,14 @@ public class Deporte {
 
     public int getCantidadJugadores() {return cantidadJugadores;}
 
+    public DeporteDTO convertirADTO() {
+        DeporteDTO dto = new DeporteDTO();
+        dto.setId(this.id);
+        dto.setNombre(this.nombre);
+        dto.setDescripcion(this.descripcion);
+        dto.setCantidadJugadores(this.cantidadJugadores);
+        return dto;
+    }
 
     @Override
     public String toString() {

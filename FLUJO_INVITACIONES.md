@@ -6,8 +6,6 @@
 ```
 POST /api/partidos
 ↓
-PartidoService.crearPartido()
-↓
 partido.notifyObservers() // Activa el patrón Observer
 ```
 

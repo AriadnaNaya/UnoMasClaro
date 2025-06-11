@@ -1,8 +1,5 @@
 package com.tpo.unoMas.model;
 
-// Imports comentados - estas clases ya no se usan
-// import com.tpo.unoMas.model.strategy.jugador.EstrategiaEmparejamiento;
-// import com.tpo.unoMas.model.strategy.jugador.EstrategiaPorNivel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.util.List;
@@ -89,6 +86,30 @@ public class Jugador {
         return deportesFavs;
     }
 
+    public JugadorDTO convertirADTO() {
+        JugadorDTO dto = new JugadorDTO();
+        dto.setId(this.id);
+        dto.setNombre(this.nombre);
+        dto.setEmail(this.email);
+        dto.setNivel(this.nivel);
+        dto.setTelefono(this.telefono);
+        // Zona como DTO
+        if (this.zona != null) {
+            dto.setZonaDTO(this.zona.convertirADTO());
+        }
+        // Deportes favoritos como lista de DTOs (si aplica)
+        if (this.deportes != null) {
+            dto.setDeportesFavoritos(
+                this.deportes.stream()
+                    .filter(DeporteJugador::esFavorito)
+                    .map(DeporteJugador::getDeporte)
+                    .filter(java.util.Objects::nonNull)
+                    .map(Deporte::convertirADTO)
+                    .toList()
+            );
+        }
+        return dto;
+    }
 
     //  Getter y Setter - Jugador
     public Long getId() {

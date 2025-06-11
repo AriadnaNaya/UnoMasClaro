@@ -1,6 +1,7 @@
 package com.tpo.unoMas.dto;
 
 import com.tpo.unoMas.model.Nivel;
+import java.util.List;
 
 /**
  * DTO para transferir información de jugadores
@@ -12,8 +13,8 @@ public class JugadorDTO {
     private String zona;
     private Nivel nivel;
     private String telefono;
-    private Integer partidosJugados;
-    private Integer partidosOrganizados;
+    private com.tpo.unoMas.dto.ZonaDTO zonaDTO;
+    private List<com.tpo.unoMas.dto.DeporteDTO> deportesFavoritos;
 
     // Constructor vacío
     public JugadorDTO() {}
@@ -48,9 +49,10 @@ public class JugadorDTO {
     public String getTelefono() { return telefono; }
     public void setTelefono(String telefono) { this.telefono = telefono; }
 
-    public Integer getPartidosJugados() { return partidosJugados; }
-    public void setPartidosJugados(Integer partidosJugados) { this.partidosJugados = partidosJugados; }
+    public com.tpo.unoMas.dto.ZonaDTO getZonaDTO() { return zonaDTO; }
+    public void setZonaDTO(com.tpo.unoMas.dto.ZonaDTO zonaDTO) { this.zonaDTO = zonaDTO; }
 
-    public Integer getPartidosOrganizados() { return partidosOrganizados; }
-    public void setPartidosOrganizados(Integer partidosOrganizados) { this.partidosOrganizados = partidosOrganizados; }
+    public List<com.tpo.unoMas.dto.DeporteDTO> getDeportesFavoritos() { return deportesFavoritos; }
+    public void setDeportesFavoritos(List<com.tpo.unoMas.dto.DeporteDTO> deportesFavoritos) { this.deportesFavoritos = deportesFavoritos; }
+
 } 

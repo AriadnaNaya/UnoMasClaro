@@ -37,33 +37,11 @@ public class PartidoService {
     @Autowired
     private NotificacionService notificacionService;
 
-    /**
-     * RF3: Crear un partido
-     * Estado inicial: NecesitamosJugadores
-     */
-    public Partido crearPartido(
-        CrearPartidoRequest request,
-        Jugador organizador,
-        Zona zona,
-        Deporte deporte,
-        List<Jugador> disponibles
-    ) {
-        Partido partido = new Partido();
-        partido.setTitulo(request.getTitulo());
-        partido.setFechaHora(request.getFechaHora());
-        partido.setZona(zona);
-        partido.setDeporte(deporte);
-        partido.setNivel(request.getNivel());
-        partido.setOrganizador(organizador);
-        partido.setDuracionMinutos(request.getDuracionMinutos());
-        partido.cambiarEstado(new NecesitamosJugadores());
-        partido = partidoRepository.save(partido);
-        partido.agregarJugador(organizador);
+    public Partido guardarPartido(Partido partido, List<Jugador> disponibles) {
         partido.invitarJugadores(disponibles);
         notificacionService.notificarConTitulo(partido, "Partido creado", "Se ha creado un partido");
         return partidoRepository.save(partido);
     }
-
     
     public List<Partido> buscarPartidos(BuscarPartidosRequest request) {
         List<Partido> todosLosPartidos = partidoRepository.findAll();
@@ -158,44 +136,7 @@ public class PartidoService {
     /**
      * Convertir Partido a DTO
      */
-    public PartidoDTO convertirADTO(Partido partido) {
-        PartidoDTO dto = new PartidoDTO();
-        dto.setId(partido.getId());
-        dto.setTitulo(partido.getTitulo());
-        dto.setFechaHora(partido.getFechaHora());
-        dto.setZona(partido.getZona().getNombre());
-        dto.setDeporte(partido.getDeporte().getNombre());
-        dto.setNivel(partido.getNivel());
-        dto.setOrganizador(partido.getOrganizador().getNombre());
-        dto.setDuracionMinutos(partido.getDuracionMinutos());
-        dto.setEstado(partido.getEstado().getClass().getSimpleName());
-        
-        // Convertir jugadores
-        List<JugadorSimpleDTO> jugadoresDTO = partido.getJugadores().stream()
-                .map(jugador -> new JugadorSimpleDTO(
-                    jugador.getId(),
-                    jugador.getNombre(),
-                    jugador.getEmail(),
-                    jugador.getZona().getNombre()
-                ))
-                .collect(Collectors.toList());
-        dto.setJugadores(jugadoresDTO);
-        
-        // Convertir jugadores confirmados
-        List<JugadorSimpleDTO> confirmadosDTO = partido.getJugadoresConfirmados().stream()
-                .map(jugador -> new JugadorSimpleDTO(
-                    jugador.getId(),
-                    jugador.getNombre(),
-                    jugador.getEmail(),
-                    jugador.getZona().getNombre()
-                ))
-                .collect(Collectors.toList());
-        dto.setJugadoresConfirmados(confirmadosDTO);
-        
-        dto.setJugadoresNecesarios(partido.getDeporte().getCantidadJugadores() - partido.getJugadores().size());
-        
-        return dto;
-    }
+    // Eliminar la lógica de conversión de jugadores a DTO del método convertirADTO. Si el método ya no se usa, eliminarlo completamente.
 
     public List<Jugador> encontrarJugadoresPorHistorial(Partido partido, List<Jugador> jugadoresDisponibles, EmparejamientoPorHistorial estrategia) {
         return jugadoresDisponibles.stream()

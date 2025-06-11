@@ -38,9 +38,14 @@ public class JugadorController {
     @PostMapping("/registro")
     public ResponseEntity<?> registrarJugador(@Valid @RequestBody RegistroJugadorRequest request) {
         try {
-            Jugador jugador = jugadorService.registrarJugador(request);
-            JugadorDTO jugadorDTO = jugadorService.convertirADTO(jugador);
-            
+            Jugador jugador = new Jugador();
+            jugador.setNombre(request.getNombre());
+            jugador.setEmail(request.getEmail());
+            jugador.setNivel(request.getNivel());
+            jugador.setTelefono(request.getTelefono());
+            // Setear zona y otros campos si corresponde
+            Jugador jugadorGuardado = jugadorService.guardar(jugador);
+            JugadorDTO jugadorDTO = jugadorGuardado.convertirADTO();
             return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                 "mensaje", "Jugador registrado exitosamente",
                 "jugador", jugadorDTO
@@ -60,8 +65,7 @@ public class JugadorController {
     public ResponseEntity<?> obtenerJugador(@PathVariable Long id) {
         try {
             Jugador jugador = jugadorService.obtenerPorId(id);
-            JugadorDTO jugadorDTO = jugadorService.convertirADTO(jugador);
-            
+            JugadorDTO jugadorDTO = jugador.convertirADTO();
             return ResponseEntity.ok(Map.of(
                 "jugador", jugadorDTO
             ));
@@ -78,9 +82,8 @@ public class JugadorController {
         try {
             List<Jugador> jugadores = jugadorService.obtenerTodos();
             List<JugadorDTO> jugadoresDTO = jugadores.stream()
-                .map(jugadorService::convertirADTO)
+                .map(Jugador::convertirADTO)
                 .toList();
-                
             return ResponseEntity.ok(Map.of(
                 "jugadores", jugadoresDTO,
                 "cantidad", jugadoresDTO.size()
@@ -101,9 +104,8 @@ public class JugadorController {
         try {
             List<Jugador> jugadores = jugadorService.obtenerPorZona(zonaId);
             List<JugadorDTO> jugadoresDTO = jugadores.stream()
-                .map(jugadorService::convertirADTO)
+                .map(Jugador::convertirADTO)
                 .toList();
-                
             return ResponseEntity.ok(Map.of(
                 "jugadores", jugadoresDTO,
                 "zona", zonaId,
@@ -124,8 +126,7 @@ public class JugadorController {
     public ResponseEntity<?> obtenerJugadorPorEmail(@PathVariable String email) {
         try {
             Jugador jugador = jugadorService.obtenerPorEmail(email);
-            JugadorDTO jugadorDTO = jugadorService.convertirADTO(jugador);
-            
+            JugadorDTO jugadorDTO = jugador.convertirADTO();
             return ResponseEntity.ok(Map.of(
                 "jugador", jugadorDTO
             ));
@@ -142,7 +143,7 @@ public class JugadorController {
                                              @Valid @RequestBody RegistroJugadorRequest request) {
         try {
             Jugador jugador = jugadorService.actualizarJugador(id, request);
-            JugadorDTO jugadorDTO = jugadorService.convertirADTO(jugador);
+            JugadorDTO jugadorDTO = jugador.convertirADTO();
             
             return ResponseEntity.ok(Map.of(
                 "mensaje", "Jugador actualizado exitosamente",
@@ -156,22 +157,5 @@ public class JugadorController {
         }
     }
 
-    /**
-     * Obtener estadísticas del jugador
-     */
-    @GetMapping("/{id}/estadisticas")
-    public ResponseEntity<?> obtenerEstadisticasJugador(@PathVariable Long id) {
-        try {
-            Map<String, Object> estadisticas = jugadorService.obtenerEstadisticas(id);
-            
-            return ResponseEntity.ok(Map.of(
-                "estadisticas", estadisticas
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of(
-                "error", "Error al obtener estadísticas",
-                "detalle", e.getMessage()
-            ));
-        }
-    }
+
 } 

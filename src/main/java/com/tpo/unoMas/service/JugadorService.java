@@ -34,34 +34,6 @@ public class JugadorService {
     private PartidoRepository partidoRepository;
 
     /**
-     * RF1: Registrar un nuevo jugador
-     */
-    public Jugador registrarJugador(RegistroJugadorRequest request) {
-        // Validar que el email no exista
-        if (jugadorRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Ya existe un jugador con ese email");
-        }
-        
-        // Obtener zona y deporte
-        Zona zona = zonaRepository.findById(request.getZonaId())
-                .orElseThrow(() -> new RuntimeException("Zona no encontrada"));
-        
-        Deporte deporteFavorito = deporteRepository.findById(request.getDeporteFavoritoId())
-                .orElseThrow(() -> new RuntimeException("Deporte no encontrado"));
-        
-        // Crear jugador
-        Jugador jugador = new Jugador();
-        jugador.setNombre(request.getNombre());
-        jugador.setEmail(request.getEmail());
-        jugador.setZona(zona);
-        jugador.setNivel(request.getNivel());
-        jugador.setTelefono(request.getTelefono());
-        jugador.agregarAFavoritos(deporteFavorito);
-        
-        return jugadorRepository.save(jugador);
-    }
-
-    /**
      * Obtener jugador por ID
      */
     public Jugador obtenerPorId(Long id) {
@@ -192,5 +164,13 @@ public class JugadorService {
         LocalDateTime fin1 = fecha1.plusMinutes(duracion1);
         LocalDateTime fin2 = fecha2.plusMinutes(duracion2);
         return !fecha1.isAfter(fin2) && !fecha2.isAfter(fin1);
+    }
+
+    public Jugador guardar(Jugador jugador) {
+        // Validar que el email no exista
+        if (jugadorRepository.existsByEmail(jugador.getEmail())) {
+            throw new RuntimeException("Ya existe un jugador con ese email");
+        }
+        return jugadorRepository.save(jugador);
     }
 } 

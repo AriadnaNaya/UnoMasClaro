@@ -3,6 +3,7 @@ package com.tpo.unoMas.controller;
 import com.tpo.unoMas.dto.PartidoDTO;
 import com.tpo.unoMas.dto.CrearPartidoRequest;
 import com.tpo.unoMas.dto.BuscarPartidosRequest;
+import com.tpo.unoMas.dto.JugadorSimpleDTO;
 import com.tpo.unoMas.model.Partido;
 import com.tpo.unoMas.model.Jugador;
 import com.tpo.unoMas.model.strategy.emparejamiento.EmparejamientoPorHistorial;
@@ -89,12 +90,22 @@ public class PartidoController {
                 request.getDuracionMinutos(),
                 request.getOrganizadorId()
             );
-            Partido partido = partidoService.crearPartido(request, organizador, zona, deporte, disponibles);
-            PartidoDTO partidoDTO = partidoService.convertirADTO(partido);
+            Partido partido = new Partido();
+            partido.setTitulo(request.getTitulo());
+            partido.setFechaHora(request.getFechaHora());
+            partido.setZona(zona);
+            partido.setDeporte(deporte);
+            partido.setNivel(request.getNivel());
+            partido.setOrganizador(organizador);
+            partido.setDuracionMinutos(request.getDuracionMinutos());
+            partido.cambiarEstado(new com.tpo.unoMas.model.estado.NecesitamosJugadores());
+            partido.agregarJugador(organizador);
+            Partido partidoGuardado = partidoService.guardarPartido(partido, disponibles);
+            PartidoDTO partidoDTO = partidoGuardado.convertirADTO();
             return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                 "mensaje", "Partido creado exitosamente",
                 "partido", partidoDTO,
-                "estado", partido.getEstado().getClass().getSimpleName()
+                "estado", partidoGuardado.getEstado().getClass().getSimpleName()
             ));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
@@ -160,8 +171,7 @@ public class PartidoController {
     public ResponseEntity<?> obtenerPartido(@PathVariable Long id) {
         try {
             Partido partido = partidoService.obtenerPorId(id);
-            PartidoDTO partidoDTO = partidoService.convertirADTO(partido);
-            
+            PartidoDTO partidoDTO = partido.convertirADTO();
             return ResponseEntity.ok(Map.of(
                 "partido", partidoDTO,
                 "estado", partido.getEstado().getClass().getSimpleName(),

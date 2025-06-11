@@ -35,9 +35,12 @@ public class ConfiguracionController {
     public ResponseEntity<?> obtenerZonas() {
         try {
             List<Zona> zonas = zonaRepository.findAll();
+            List<ZonaDTO> zonasDTO = zonas.stream()
+                .map(Zona::convertirADTO)
+                .toList();
             return ResponseEntity.ok(Map.of(
-                "zonas", zonas,
-                "cantidad", zonas.size()
+                "zonas", zonasDTO,
+                "cantidad", zonasDTO.size()
             ));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
@@ -54,9 +57,12 @@ public class ConfiguracionController {
     public ResponseEntity<?> obtenerDeportes() {
         try {
             List<Deporte> deportes = deporteRepository.findAll();
+            List<DeporteDTO> deportesDTO = deportes.stream()
+                .map(Deporte::convertirADTO)
+                .toList();
             return ResponseEntity.ok(Map.of(
-                "deportes", deportes,
-                "cantidad", deportes.size()
+                "deportes", deportesDTO,
+                "cantidad", deportesDTO.size()
             ));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(

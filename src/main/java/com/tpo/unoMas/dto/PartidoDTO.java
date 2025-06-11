@@ -20,6 +20,9 @@ public class PartidoDTO {
     private List<JugadorSimpleDTO> jugadores;
     private List<JugadorSimpleDTO> jugadoresConfirmados;
     private Integer jugadoresNecesarios;
+    private com.tpo.unoMas.dto.ZonaDTO zonaDTO;
+    private com.tpo.unoMas.dto.DeporteDTO deporteDTO;
+    private com.tpo.unoMas.dto.JugadorDTO organizadorDTO;
 
     // Constructor vacío
     public PartidoDTO() {}
@@ -78,4 +81,13 @@ public class PartidoDTO {
     public void setJugadoresNecesarios(Integer jugadoresNecesarios) { 
         this.jugadoresNecesarios = jugadoresNecesarios; 
     }
+
+    public com.tpo.unoMas.dto.ZonaDTO getZonaDTO() { return zonaDTO; }
+    public void setZonaDTO(com.tpo.unoMas.dto.ZonaDTO zonaDTO) { this.zonaDTO = zonaDTO; }
+
+    public com.tpo.unoMas.dto.DeporteDTO getDeporteDTO() { return deporteDTO; }
+    public void setDeporteDTO(com.tpo.unoMas.dto.DeporteDTO deporteDTO) { this.deporteDTO = deporteDTO; }
+
+    public com.tpo.unoMas.dto.JugadorDTO getOrganizadorDTO() { return organizadorDTO; }
+    public void setOrganizadorDTO(com.tpo.unoMas.dto.JugadorDTO organizadorDTO) { this.organizadorDTO = organizadorDTO; }
 } 
