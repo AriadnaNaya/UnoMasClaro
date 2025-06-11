@@ -1,4 +1,4 @@
-package com.tpo.unoMas.observer;
+package com.tpo.unoMas.model.observer;
 
 import com.tpo.unoMas.model.Partido;
 

@@ -1,7 +1,7 @@
 package com.tpo.unoMas.demo;
 
 import com.tpo.unoMas.model.*;
-import com.tpo.unoMas.observer.Observer;
+import com.tpo.unoMas.model.observer.Observer;
 import com.tpo.unoMas.model.strategy.notificacion.INotificacionStrategy;
 import com.tpo.unoMas.service.NotificacionService;
 

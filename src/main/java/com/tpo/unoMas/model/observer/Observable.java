@@ -1,4 +1,4 @@
-package com.tpo.unoMas.observer;
+package com.tpo.unoMas.model.observer;
 
 // La clase que va a notificar de sus cambios de estado a los que Observan
 public interface Observable {
