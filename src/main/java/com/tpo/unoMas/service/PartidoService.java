@@ -4,6 +4,9 @@ import com.tpo.unoMas.dto.*;
 import com.tpo.unoMas.model.*;
 import com.tpo.unoMas.model.estado.*;
 import com.tpo.unoMas.repository.*;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,9 +81,11 @@ public class PartidoService {
     }
 
     
-    /**
-     * Devuelve los partidos donde el jugador sería considerado potencial según la estrategia de emparejamiento del partido
-     */
+    public List<Partido> buscarPartidos(BuscarPartidosRequest request) {
+        List<Partido> todosLosPartidos = partidoRepository.findAll();
+        return todosLosPartidos;
+    }
+
     public List<Partido> buscarPartidosCompatiblesParaJugador(Long jugadorId) {
         Jugador jugador = jugadorService.obtenerPorId(jugadorId);
         List<Partido> todosLosPartidos = partidoRepository.findAll();
@@ -94,8 +99,6 @@ public class PartidoService {
             })
             .collect(Collectors.toList());
     }
-
-
 
     /**
      * Obtener partido por ID
@@ -216,5 +219,6 @@ public class PartidoService {
     public JugadorService getJugadorService() {
         return this.jugadorService;
     }
+
 
 } 

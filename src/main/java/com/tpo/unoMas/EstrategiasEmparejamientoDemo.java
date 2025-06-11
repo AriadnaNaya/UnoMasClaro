@@ -3,8 +3,8 @@ package com.tpo.unoMas;
 import com.tpo.unoMas.model.*;
 import com.tpo.unoMas.model.strategy.emparejamiento.*;
 import com.tpo.unoMas.model.strategy.notificacion.INotificacionStrategy;
-import com.tpo.unoMas.service.InvitacionService;
 import com.tpo.unoMas.service.NotificacionService;
+import com.tpo.unoMas.DemoInvitacionUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,7 +40,6 @@ public class EstrategiasEmparejamientoDemo {
         DatosPrueba datos = new DatosPrueba();
         
         // Configurar servicios
-        InvitacionService invitacionService = new InvitacionService();
         NotificacionService notificacionService = new NotificacionService();
         DemoNotificacionStrategy demoStrategy = new DemoNotificacionStrategy();
         notificacionService.cambiarEstrategiaNotificacion(demoStrategy);
@@ -56,8 +55,6 @@ public class EstrategiasEmparejamientoDemo {
         System.out.println("⭐ Nivel: " + datos.partidoFutbol.getNivel());
         System.out.println("👥 Jugadores registrados: " + datos.jugadoresRegistrados.size());
         
-        System.out.println("\n" + invitacionService.getInformacionEstrategias());
-        
         System.out.println("\n" + "=".repeat(60));
         System.out.println("🧪 PROBANDO ESTRATEGIAS DE EMPAREJAMIENTO");
         System.out.println("=".repeat(60));
@@ -65,29 +62,29 @@ public class EstrategiasEmparejamientoDemo {
         // 1. Estrategia por Cercanía
         System.out.println("\n🌍 ESTRATEGIA POR CERCANÍA");
         System.out.println("Busca jugadores en la misma zona geográfica");
-        List<Jugador> invitadosCercania = invitacionService.enviarInvitaciones(
-            datos.partidoFutbol, datos.jugadoresRegistrados, estrategiaCercania);
+        List<Jugador> invitadosCercania = DemoInvitacionUtils.enviarInvitaciones(
+            datos.partidoFutbol, datos.jugadoresRegistrados, estrategiaCercania, notificacionService);
         mostrarResultados("Cercanía", invitadosCercania);
         
         // 2. Estrategia por Nivel
         System.out.println("\n⭐ ESTRATEGIA POR NIVEL");
         System.out.println("Busca jugadores con nivel compatible");
-        List<Jugador> invitadosNivel = invitacionService.enviarInvitaciones(
-            datos.partidoFutbol, datos.jugadoresRegistrados, estrategiaNivel);
+        List<Jugador> invitadosNivel = DemoInvitacionUtils.enviarInvitaciones(
+            datos.partidoFutbol, datos.jugadoresRegistrados, estrategiaNivel, notificacionService);
         mostrarResultados("Nivel", invitadosNivel);
         
         // 3. Estrategia por Historial
         System.out.println("\n📊 ESTRATEGIA POR HISTORIAL");
         System.out.println("Busca jugadores con historial relevante");
-        List<Jugador> invitadosHistorial = invitacionService.enviarInvitaciones(
-            datos.partidoFutbol, datos.jugadoresRegistrados, estrategiaHistorial);
+        List<Jugador> invitadosHistorial = DemoInvitacionUtils.enviarInvitaciones(
+            datos.partidoFutbol, datos.jugadoresRegistrados, estrategiaHistorial, notificacionService);
         mostrarResultados("Historial", invitadosHistorial);
         
         // 4. Todas las estrategias
         System.out.println("\n🎯 TODAS LAS ESTRATEGIAS COMBINADAS");
         System.out.println("Para partidos prioritarios");
-        List<Jugador> todosCombinados = invitacionService.enviarInvitacionesConTodasEstrategias(
-            datos.partidoFutbol, datos.jugadoresRegistrados);
+        List<Jugador> todosCombinados = DemoInvitacionUtils.enviarInvitacionesConTodasEstrategias(
+            datos.partidoFutbol, datos.jugadoresRegistrados, notificacionService);
         mostrarResultados("Combinadas", todosCombinados);
         
         // Resumen final

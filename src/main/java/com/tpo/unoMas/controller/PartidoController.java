@@ -4,9 +4,7 @@ import com.tpo.unoMas.dto.PartidoDTO;
 import com.tpo.unoMas.dto.CrearPartidoRequest;
 import com.tpo.unoMas.dto.BuscarPartidosRequest;
 import com.tpo.unoMas.model.Partido;
-import com.tpo.unoMas.model.Jugador;
 import com.tpo.unoMas.service.PartidoService;
-import com.tpo.unoMas.service.InvitacionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +14,6 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -108,6 +105,30 @@ public class PartidoController {
             ));
         }
     }
+
+    /**
+     * Obtener partidos por jugador
+     */
+    @GetMapping("/buscar/{jugadorId}")
+    public ResponseEntity<?> obtenerPartidosPorJugador(@PathVariable Long jugadorId) {
+        try {
+            List<Partido> partidos = partidoService.obtenerPartidosPorJugador(jugadorId);
+            List<PartidoDTO> partidosDTO = partidos.stream()
+                    .map(partidoService::convertirADTO)
+                    .toList();
+
+            return ResponseEntity.ok(Map.of(
+                    "partidos", partidosDTO,
+                    "cantidad", partidosDTO.size()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Error al obtener partidos",
+                    "detalle", e.getMessage()
+            ));
+        }
+    }
+
 
     /**
      * Obtener partido por ID
@@ -206,28 +227,6 @@ public class PartidoController {
         }
     }
 
-    /**
-     * Obtener partidos por jugador
-     */
-    @GetMapping("/jugador/{jugadorId}")
-    public ResponseEntity<?> obtenerPartidosPorJugador(@PathVariable Long jugadorId) {
-        try {
-            List<Partido> partidos = partidoService.obtenerPartidosPorJugador(jugadorId);
-            List<PartidoDTO> partidosDTO = partidos.stream()
-                .map(partidoService::convertirADTO)
-                .toList();
-                
-            return ResponseEntity.ok(Map.of(
-                "partidos", partidosDTO,
-                "cantidad", partidosDTO.size()
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of(
-                "error", "Error al obtener partidos",
-                "detalle", e.getMessage()
-            ));
-        }
-    }
 
     /**
      * Buscar partidos compatibles para un jugador según la estrategia de emparejamiento de cada partido
@@ -254,4 +253,4 @@ public class PartidoController {
     // ELIMINADO: enviarInvitaciones manual
     // Las invitaciones se envían automáticamente cuando se crea un partido
     // a través del patrón Observer (InvitacionService)
-} 
+}

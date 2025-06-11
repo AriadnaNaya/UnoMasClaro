@@ -6,6 +6,10 @@ import com.tpo.unoMas.model.strategy.notificacion.INotificacionStrategy;
 import org.springframework.stereotype.Service;
 
 import com.tpo.unoMas.observer.Observer;
+import com.tpo.unoMas.model.Jugador;
+import com.tpo.unoMas.model.strategy.emparejamiento.EstrategiaEmparejamiento;
+import java.util.List;
+import java.util.ArrayList;
 
 @Service
 public class NotificacionService implements Observer {

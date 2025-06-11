@@ -4,8 +4,8 @@ import com.tpo.unoMas.model.*;
 import com.tpo.unoMas.model.estado.NecesitamosJugadores;
 import com.tpo.unoMas.model.strategy.emparejamiento.*;
 import com.tpo.unoMas.model.strategy.notificacion.INotificacionStrategy;
-import com.tpo.unoMas.service.InvitacionService;
 import com.tpo.unoMas.service.NotificacionService;
+import com.tpo.unoMas.DemoInvitacionUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -27,17 +27,15 @@ public class ObserverStrategyDemo {
         
         // Configurar servicios
         NotificacionService notificacionService = new NotificacionService();
-        InvitacionService invitacionService = new InvitacionService();
         SimpleNotificacionStrategy mockStrategy = new SimpleNotificacionStrategy();
         notificacionService.cambiarEstrategiaNotificacion(mockStrategy);
         
         // Crear jugadores de prueba
         List<Jugador> jugadores = crearJugadoresPrueba();
-        invitacionService.registrarJugadores(jugadores);
         
         System.out.println("✅ Configuración inicial completada");
         System.out.println("👥 Jugadores registrados: " + jugadores.size());
-        System.out.println("🎯 Estrategia por defecto: " + invitacionService.getEstrategiaDefecto().getDescripcion());
+        System.out.println("🎯 Estrategia por defecto: " + notificacionService.getEstrategiaDefecto().getDescripcion());
         
         System.out.println("\n" + "=".repeat(60));
         System.out.println("🧪 CREANDO PARTIDO - INVITACIONES AUTOMÁTICAS");
@@ -46,12 +44,11 @@ public class ObserverStrategyDemo {
         // Crear partido
         Partido partido = crearPartidoPrueba();
         
-        // ✅ CLAVE: Registrar InvitacionService como Observer
-        partido.attach(invitacionService);
+        // ✅ CLAVE: Registrar NotificacionService como Observer
         partido.attach(notificacionService);
         
         System.out.println("📝 Partido creado: " + partido.getTitulo());
-        System.out.println("🔗 InvitacionService registrado como Observer");
+        System.out.println("🔗 NotificacionService registrado como Observer");
         
         // ✅ DISPARAR EL EVENTO: Cambiar estado activa los observers
         System.out.println("\n🚀 CAMBIANDO ESTADO → Esto dispara las invitaciones automáticas");
@@ -64,25 +61,25 @@ public class ObserverStrategyDemo {
         // Probar estrategia por cercanía
         System.out.println("\n🌍 Estrategia por Cercanía:");
         EstrategiaEmparejamiento estrategiaCercania = new EmparejamientoPorCercania();
-        List<Jugador> invitadosCercania = invitacionService.enviarInvitaciones(partido, jugadores, estrategiaCercania);
+        List<Jugador> invitadosCercania = DemoInvitacionUtils.enviarInvitaciones(partido, jugadores, estrategiaCercania, notificacionService);
         System.out.println("   📧 Invitados: " + invitadosCercania.size());
         
         // Probar estrategia por nivel
         System.out.println("\n⭐ Estrategia por Nivel:");
         EstrategiaEmparejamiento estrategiaNivel = new EmparejamientoPorNivel();
-        List<Jugador> invitadosNivel = invitacionService.enviarInvitaciones(partido, jugadores, estrategiaNivel);
+        List<Jugador> invitadosNivel = DemoInvitacionUtils.enviarInvitaciones(partido, jugadores, estrategiaNivel, notificacionService);
         System.out.println("   📧 Invitados: " + invitadosNivel.size());
         
         // Probar estrategia por historial
         System.out.println("\n📊 Estrategia por Historial:");
         EstrategiaEmparejamiento estrategiaHistorial = new EmparejamientoPorHistorial();
-        List<Jugador> invitadosHistorial = invitacionService.enviarInvitaciones(partido, jugadores, estrategiaHistorial);
+        List<Jugador> invitadosHistorial = DemoInvitacionUtils.enviarInvitaciones(partido, jugadores, estrategiaHistorial, notificacionService);
         System.out.println("   📧 Invitados: " + invitadosHistorial.size());
         
         System.out.println("\n" + "=".repeat(60));
         System.out.println("✅ DEMOSTRACIÓN COMPLETADA");
         System.out.println("=".repeat(60));
-        System.out.println("🔄 Observer Pattern: InvitacionService reacciona automáticamente a creación de partidos");
+        System.out.println("🔄 Observer Pattern: NotificacionService reacciona automáticamente a creación de partidos");
         System.out.println("🎯 Strategy Pattern: Se pueden usar diferentes algoritmos de emparejamiento");
         System.out.println("📧 Sistema integrado de invitaciones funcionando correctamente");
         
