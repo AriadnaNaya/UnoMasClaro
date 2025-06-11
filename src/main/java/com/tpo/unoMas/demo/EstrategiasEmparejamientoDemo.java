@@ -1,10 +1,10 @@
-package com.tpo.unoMas;
+package com.tpo.unoMas.demo;
 
+import com.tpo.unoMas.demo.DemoUtils;
 import com.tpo.unoMas.model.*;
 import com.tpo.unoMas.model.strategy.emparejamiento.*;
 import com.tpo.unoMas.model.strategy.notificacion.INotificacionStrategy;
 import com.tpo.unoMas.service.NotificacionService;
-import com.tpo.unoMas.DemoInvitacionUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -62,28 +62,28 @@ public class EstrategiasEmparejamientoDemo {
         // 1. Estrategia por Cercanía
         System.out.println("\n🌍 ESTRATEGIA POR CERCANÍA");
         System.out.println("Busca jugadores en la misma zona geográfica");
-        List<Jugador> invitadosCercania = DemoInvitacionUtils.enviarInvitaciones(
+        List<Jugador> invitadosCercania = DemoUtils.enviarInvitaciones(
             datos.partidoFutbol, datos.jugadoresRegistrados, estrategiaCercania, notificacionService);
         mostrarResultados("Cercanía", invitadosCercania);
         
         // 2. Estrategia por Nivel
         System.out.println("\n⭐ ESTRATEGIA POR NIVEL");
         System.out.println("Busca jugadores con nivel compatible");
-        List<Jugador> invitadosNivel = DemoInvitacionUtils.enviarInvitaciones(
+        List<Jugador> invitadosNivel = DemoUtils.enviarInvitaciones(
             datos.partidoFutbol, datos.jugadoresRegistrados, estrategiaNivel, notificacionService);
         mostrarResultados("Nivel", invitadosNivel);
         
         // 3. Estrategia por Historial
         System.out.println("\n📊 ESTRATEGIA POR HISTORIAL");
         System.out.println("Busca jugadores con historial relevante");
-        List<Jugador> invitadosHistorial = DemoInvitacionUtils.enviarInvitaciones(
+        List<Jugador> invitadosHistorial = DemoUtils.enviarInvitaciones(
             datos.partidoFutbol, datos.jugadoresRegistrados, estrategiaHistorial, notificacionService);
         mostrarResultados("Historial", invitadosHistorial);
         
         // 4. Todas las estrategias
         System.out.println("\n🎯 TODAS LAS ESTRATEGIAS COMBINADAS");
         System.out.println("Para partidos prioritarios");
-        List<Jugador> todosCombinados = DemoInvitacionUtils.enviarInvitacionesConTodasEstrategias(
+        List<Jugador> todosCombinados = DemoUtils.enviarInvitacionesConTodasEstrategias(
             datos.partidoFutbol, datos.jugadoresRegistrados, notificacionService);
         mostrarResultados("Combinadas", todosCombinados);
         

@@ -1,11 +1,11 @@
-package com.tpo.unoMas;
+package com.tpo.unoMas.demo;
 
+import com.tpo.unoMas.demo.DemoUtils;
 import com.tpo.unoMas.model.*;
 import com.tpo.unoMas.model.estado.NecesitamosJugadores;
 import com.tpo.unoMas.model.strategy.emparejamiento.*;
 import com.tpo.unoMas.model.strategy.notificacion.INotificacionStrategy;
 import com.tpo.unoMas.service.NotificacionService;
-import com.tpo.unoMas.DemoInvitacionUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -85,7 +85,7 @@ public class SistemaInvitacionesDemo {
         // ✅ PASO 5: Invitaciones manuales con estrategia específica
         System.out.println("\n🎯 PASO 5: Enviando invitaciones manuales con estrategia Por Historial");
         EstrategiaEmparejamiento estrategiaHistorial = new EmparejamientoPorHistorial();
-        List<Jugador> invitadosHistorial = DemoInvitacionUtils.enviarInvitaciones(
+        List<Jugador> invitadosHistorial = DemoUtils.enviarInvitaciones(
             partido, datos.jugadoresRegistrados, estrategiaHistorial, notificacionService);
         
         System.out.println("\n" + "=".repeat(70));

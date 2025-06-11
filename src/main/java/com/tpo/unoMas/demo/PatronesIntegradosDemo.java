@@ -1,9 +1,10 @@
-package com.tpo.unoMas;
+package com.tpo.unoMas.demo;
 
 import com.tpo.unoMas.model.*;
+import com.tpo.unoMas.observer.Observer;
 import com.tpo.unoMas.model.strategy.notificacion.INotificacionStrategy;
 import com.tpo.unoMas.service.NotificacionService;
-import com.tpo.unoMas.observer.Observer;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

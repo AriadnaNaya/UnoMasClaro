@@ -1,4 +1,4 @@
-package com.tpo.unoMas;
+package com.tpo.unoMas.demo;
 
 import com.tpo.unoMas.model.*;
 import com.tpo.unoMas.model.estado.*;

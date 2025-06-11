@@ -7,7 +7,7 @@ import com.tpo.unoMas.model.strategy.notificacion.INotificacionStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import com.tpo.unoMas.DemoInvitacionUtils;
+import com.tpo.unoMas.demo.DemoUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public class EstrategiasEmparejamientoTest {
         EstrategiaEmparejamiento estrategia = new EmparejamientoPorCercania();
         
         // When
-        List<Jugador> invitados = DemoInvitacionUtils.enviarInvitaciones(
+        List<Jugador> invitados = DemoUtils.enviarInvitaciones(
             partidoFutbol, jugadoresRegistrados, estrategia, notificacionService);
         
         // Then
@@ -77,7 +77,7 @@ public class EstrategiasEmparejamientoTest {
         EstrategiaEmparejamiento estrategia = new EmparejamientoPorNivel();
         
         // When
-        List<Jugador> invitados = DemoInvitacionUtils.enviarInvitaciones(
+        List<Jugador> invitados = DemoUtils.enviarInvitaciones(
             partidoFutbol, jugadoresRegistrados, estrategia, notificacionService);
         
         // Then
@@ -98,7 +98,7 @@ public class EstrategiasEmparejamientoTest {
         EstrategiaEmparejamiento estrategia = new EmparejamientoPorHistorial();
         
         // When
-        List<Jugador> invitados = DemoInvitacionUtils.enviarInvitaciones(
+        List<Jugador> invitados = DemoUtils.enviarInvitaciones(
             partidoFutbol, jugadoresRegistrados, estrategia, notificacionService);
         
         // Then
@@ -111,7 +111,7 @@ public class EstrategiasEmparejamientoTest {
     @Test
     public void testTodasLasEstrategias() {
         // When
-        List<Jugador> invitados = DemoInvitacionUtils.enviarInvitacionesConTodasEstrategias(
+        List<Jugador> invitados = DemoUtils.enviarInvitacionesConTodasEstrategias(
             partidoFutbol, jugadoresRegistrados, notificacionService);
         
         // Then
@@ -129,13 +129,13 @@ public class EstrategiasEmparejamientoTest {
         EstrategiaEmparejamiento estrategiaHistorial = new EmparejamientoPorHistorial();
         
         // When - Usar cada estrategia
-        List<Jugador> invitadosCercania = DemoInvitacionUtils.enviarInvitaciones(
+        List<Jugador> invitadosCercania = DemoUtils.enviarInvitaciones(
             partidoFutbol, jugadoresRegistrados, estrategiaCercania, notificacionService);
         
-        List<Jugador> invitadosNivel = DemoInvitacionUtils.enviarInvitaciones(
+        List<Jugador> invitadosNivel = DemoUtils.enviarInvitaciones(
             partidoFutbol, jugadoresRegistrados, estrategiaNivel, notificacionService);
             
-        List<Jugador> invitadosHistorial = DemoInvitacionUtils.enviarInvitaciones(
+        List<Jugador> invitadosHistorial = DemoUtils.enviarInvitaciones(
             partidoFutbol, jugadoresRegistrados, estrategiaHistorial, notificacionService);
         
         // Then - Verificar que se pueden cambiar estrategias dinámicamente

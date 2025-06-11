@@ -86,55 +86,18 @@ public class ConfiguracionController {
     }
 
     /**
-     * Crear datos de prueba para el sistema
+     * Crear datos de prueba para el sistema (DELEGADO A DemoUtils)
      */
     @PostMapping("/datos-prueba")
     public ResponseEntity<?> crearDatosPrueba() {
         try {
-            // Crear zonas de prueba si no existen
-            if (zonaRepository.count() == 0) {
-                // Crear ubicaciones
-                Ubicacion ubicacionPalermo = new Ubicacion();
-                ubicacionPalermo.setLatitud(-34.5875);
-                ubicacionPalermo.setLongitud(-58.4217);
-                
-                Ubicacion ubicacionBelgrano = new Ubicacion();
-                ubicacionBelgrano.setLatitud(-34.5631);
-                ubicacionBelgrano.setLongitud(-58.4550);
-                
-                Ubicacion ubicacionSanTelmo = new Ubicacion();
-                ubicacionSanTelmo.setLatitud(-34.6219);
-                ubicacionSanTelmo.setLongitud(-58.3731);
-
-                // Crear zonas usando el constructor correcto
-                Zona zona1 = new Zona("Palermo", "CABA", ubicacionPalermo);
-                zonaRepository.save(zona1);
-
-                Zona zona2 = new Zona("Belgrano", "CABA", ubicacionBelgrano);
-                zonaRepository.save(zona2);
-
-                Zona zona3 = new Zona("San Telmo", "CABA", ubicacionSanTelmo);
-                zonaRepository.save(zona3);
+            Map<String, Object> resultado = com.tpo.unoMas.demo.DemoUtils.crearDatosPrueba(zonaRepository, deporteRepository);
+            
+            if (resultado.containsKey("error")) {
+                return ResponseEntity.badRequest().body(resultado);
             }
-
-            // Crear deportes de prueba si no existen
-            if (deporteRepository.count() == 0) {
-                // Usar el constructor correcto de Deporte
-                Deporte futbol = new Deporte("Fútbol 11", "Deporte de equipo jugado con los pies", 22);
-                deporteRepository.save(futbol);
-
-                Deporte tenis = new Deporte("Tenis", "Deporte de raqueta individual o por parejas", 2);
-                deporteRepository.save(tenis);
-
-                Deporte basquet = new Deporte("Básquet", "Deporte de equipo jugado con las manos", 10);
-                deporteRepository.save(basquet);
-            }
-
-            return ResponseEntity.ok(Map.of(
-                "mensaje", "Datos de prueba creados exitosamente",
-                "zonas", zonaRepository.count(),
-                "deportes", deporteRepository.count()
-            ));
+            
+            return ResponseEntity.ok(resultado);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                 "error", "Error al crear datos de prueba",
