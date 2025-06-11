@@ -7,13 +7,13 @@ public class NecesitamosJugadores extends EstadoPartido {
     @Override
     public void agregarJugador(Partido partido, Jugador jugador) {
 
-        if (partido.getJugadores().size() > partido.getMaxJugadores()) {
+        if (partido.getJugadores().size() > partido.getDeporte().getCantidadJugadores()) {
             throw new IllegalStateException("El partido ya tiene el máximo de jugadores permitidos");
         }
 
         partido.agregarJugadorInterno(jugador);
 
-        if (partido.getJugadores().size() == partido.getMinJugadores()) {
+        if (partido.getJugadores().size() == partido.getDeporte().getCantidadJugadores()) {
             partido.cambiarEstado(new PartidoArmado());
         }
     }

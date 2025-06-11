@@ -32,7 +32,7 @@ public class PartidoArmado extends EstadoPartido {
 
         partido.removerJugadorInterno(jugador);
 
-        if (partido.getJugadores().size() < partido.getMinJugadores()) {
+        if (partido.getJugadores().size() < partido.getDeporte().getCantidadJugadores()) {
             partido.cambiarEstado(new NecesitamosJugadores());
         }
     }

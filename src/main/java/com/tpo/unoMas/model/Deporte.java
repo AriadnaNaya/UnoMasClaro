@@ -24,6 +24,7 @@ public class Deporte {
     @Column(length = 500)
     private String descripcion;
 
+    @Column(nullable = false)
     private int cantidadJugadores;
 
     // Constructor vacío requerido por JPA

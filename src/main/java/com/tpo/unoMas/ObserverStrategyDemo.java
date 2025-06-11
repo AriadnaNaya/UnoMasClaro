@@ -97,7 +97,7 @@ public class ObserverStrategyDemo {
         Zona zonaSanTelmo = new Zona("San Telmo", "CABA", null);
         
         // Crear deportes
-        Deporte futbol = new Deporte("Fútbol 5", "Deporte de equipo");
+        Deporte futbol = new Deporte("Fútbol 5", "Deporte de equipo", 10);
         
         // Crear jugadores
         jugadores.add(crearJugador("Carlos", zonaPalermo, futbol, Nivel.INTERMEDIO));
@@ -122,7 +122,7 @@ public class ObserverStrategyDemo {
     
     private static Partido crearPartidoPrueba() {
         Zona zona = new Zona("Palermo", "CABA", null);
-        Deporte futbol = new Deporte("Fútbol 5", "Deporte de equipo");
+        Deporte futbol = new Deporte("Fútbol 5", "Deporte de equipo", 10);
         Jugador organizador = new Jugador("Ana", "ana@email.com", "password123", zona);
         
         Partido partido = new Partido();
@@ -131,8 +131,7 @@ public class ObserverStrategyDemo {
         partido.setZona(zona);
         partido.setDeporte(futbol);
         partido.setNivel(Nivel.INTERMEDIO);
-        partido.setMinJugadores(4);
-        partido.setMaxJugadores(8);
+
         partido.setOrganizador(organizador);
         partido.setDuracionMinutos(90);
         

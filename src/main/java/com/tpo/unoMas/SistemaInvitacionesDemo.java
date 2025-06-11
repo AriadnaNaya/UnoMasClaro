@@ -138,7 +138,7 @@ public class SistemaInvitacionesDemo {
         public Partido crearPartido() {
             // Crear zona y deporte
             Zona zonaPalermo = new Zona("Palermo", "CABA", null);
-            Deporte futbol = new Deporte("Fútbol 5", "Deporte de equipo");
+            Deporte futbol = new Deporte("Fútbol 5", "Deporte de equipo", 10);
             
             // Crear organizador
             Jugador organizador = new Jugador("Ana", "ana@email.com", "password123", zonaPalermo);
@@ -150,8 +150,6 @@ public class SistemaInvitacionesDemo {
             partido.setZona(zonaPalermo);
             partido.setDeporte(futbol);
             partido.setNivel(Nivel.INTERMEDIO);
-            partido.setMinJugadores(4);
-            partido.setMaxJugadores(8);
             partido.setOrganizador(organizador);
             
             return partido;
@@ -160,7 +158,7 @@ public class SistemaInvitacionesDemo {
         public Partido crearSegundoPartido() {
             // Crear zona y deporte diferentes
             Zona zonaSanTelmo = new Zona("San Telmo", "CABA", null);
-            Deporte basquet = new Deporte("Básquet", "Deporte de equipo");
+            Deporte basquet = new Deporte("Básquet", "Deporte de equipo", 10);
             
             // Crear organizador
             Jugador organizador = new Jugador("Diego", "diego@email.com", "password123", zonaSanTelmo);
@@ -172,8 +170,6 @@ public class SistemaInvitacionesDemo {
             partido.setZona(zonaSanTelmo);
             partido.setDeporte(basquet);
             partido.setNivel(Nivel.AVANZADO);
-            partido.setMinJugadores(6);
-            partido.setMaxJugadores(10);
             partido.setOrganizador(organizador);
             
             return partido;
@@ -188,8 +184,8 @@ public class SistemaInvitacionesDemo {
             Zona zonaLanus = new Zona("Lanús", "Lanús", null);
             
             // Crear deportes
-            Deporte futbol = new Deporte("Fútbol 5", "Deporte de equipo");
-            Deporte basquet = new Deporte("Básquet", "Deporte de equipo");
+            Deporte futbol = new Deporte("Fútbol 5", "Deporte de equipo", 10);
+            Deporte basquet = new Deporte("Básquet", "Deporte de equipo", 10);
             
             // Jugadores en Palermo
             jugadoresRegistrados.add(crearJugador("Carlos", "carlos@email.com", zonaPalermo, futbol, Nivel.INTERMEDIO));

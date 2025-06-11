@@ -29,7 +29,7 @@ public class PartidoStateTest {
         
         zona = new Zona("Centro", "CABA", ubicacion);
         
-        deporte = new Deporte("Fútbol", "Deporte de equipo");
+        deporte = new Deporte("Fútbol", "Deporte de equipo", 10);
         
         // Crear jugadores
         organizador = new Jugador();
@@ -64,8 +64,6 @@ public class PartidoStateTest {
         partido.setDeporte(deporte);
         partido.setNivel(Nivel.PRINCIPIANTE);
         partido.setOrganizador(organizador);
-        partido.setMinJugadores(2);
-        partido.setMaxJugadores(4);
         partido.setDuracionMinutos(90);
     }
 
@@ -273,7 +271,7 @@ public class PartidoStateTest {
         partido.agregarJugador(jugador3);
         partido.agregarJugador(organizador);
         assertEquals(4, partido.getJugadores().size());
-        System.out.println("Jugadores en partido: " + partido.getJugadores().size() + "/" + partido.getMaxJugadores());
+        System.out.println("Jugadores en partido: " + partido.getJugadores().size() + "/" + partido.getDeporte().getCantidadJugadores());
         assertTrue(partido.estaCompleto());
         System.out.println("✓ Partido completo alcanzado");
     }

@@ -16,7 +16,7 @@ public class PartidoStateDemo {
         ubicacion.setLongitud(-58.3815591);
         
         Zona zona = new Zona("Palermo", "CABA", ubicacion);
-        Deporte deporte = new Deporte("Fútbol 5", "Fútbol de salón");
+        Deporte deporte = new Deporte("Fútbol 5", "Fútbol de salón", 10);
         
         // Crear jugadores
         Jugador organizador = crearJugador("Ana García", "ana@email.com", zona);
@@ -32,8 +32,6 @@ public class PartidoStateDemo {
         partido.setDeporte(deporte);
         partido.setNivel(Nivel.INTERMEDIO);
         partido.setOrganizador(organizador);
-        partido.setMinJugadores(2);
-        partido.setMaxJugadores(4);
         partido.setDuracionMinutos(90);
         
         System.out.println("📋 Información del Partido:");
@@ -41,7 +39,6 @@ public class PartidoStateDemo {
         System.out.println("   Fecha: " + partido.getFechaHora().toLocalDate());
         System.out.println("   Zona: " + zona.getBarrio() + ", " + zona.getPartido());
         System.out.println("   Deporte: " + deporte.getNombre());
-        System.out.println("   Jugadores: " + partido.getMinJugadores() + "-" + partido.getMaxJugadores());
         System.out.println("   Organizador: " + organizador.getNombre());
         
         // Demostrar el patrón State
@@ -117,7 +114,7 @@ public class PartidoStateDemo {
     private static void mostrarEstado(Partido partido, String momento) {
         System.out.println("\n📊 " + momento + ":");
         System.out.println("   Estado: " + partido.getEstado().getClass().getSimpleName());
-        System.out.println("   Jugadores inscritos: " + partido.getJugadores().size() + "/" + partido.getMaxJugadores());
+        System.out.println("   Jugadores inscritos: " + partido.getJugadores().size() + "/" + partido.getDeporte().getCantidadJugadores());
         System.out.println("   Jugadores confirmados: " + partido.getJugadoresConfirmados().size());
         
         if (!partido.getJugadores().isEmpty()) {
@@ -134,7 +131,7 @@ public class PartidoStateDemo {
         ubicacion.setLongitud(-58.3815591);
         
         Zona zona = new Zona("Centro", "CABA", ubicacion);
-        Deporte deporte = new Deporte("Básquet", "Deporte de equipo");
+        Deporte deporte = new Deporte("Básquet", "Deporte de equipo", 10);
         
         Partido partidoTest = new Partido();
         partidoTest.setTitulo("Partido de Prueba");
@@ -142,8 +139,6 @@ public class PartidoStateDemo {
         partidoTest.setZona(zona);
         partidoTest.setDeporte(deporte);
         partidoTest.setNivel(Nivel.PRINCIPIANTE);
-        partidoTest.setMinJugadores(2);
-        partidoTest.setMaxJugadores(4);
         partidoTest.setDuracionMinutos(60);
         
         // Intentar iniciar sin estar confirmado

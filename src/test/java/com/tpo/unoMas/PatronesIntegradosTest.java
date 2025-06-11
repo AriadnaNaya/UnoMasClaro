@@ -36,7 +36,7 @@ public class PatronesIntegradosTest {
         ubicacion.setLongitud(-58.3815591);
         
         zona = new Zona("Centro", "CABA", ubicacion);
-        deporte = new Deporte("Fútbol", "Deporte de equipo");
+        deporte = new Deporte("Fútbol", "Deporte de equipo", 10);
         
         // Crear jugadores
         organizador = crearJugador("Ana García", "ana@test.com", zona);
@@ -52,14 +52,12 @@ public class PatronesIntegradosTest {
         partido.setDeporte(deporte);
         partido.setNivel(Nivel.INTERMEDIO);
         partido.setOrganizador(organizador);
-        partido.setMinJugadores(2);
-        partido.setMaxJugadores(4);
         partido.setDuracionMinutos(90);
         
         // Configurar sistema de notificaciones
         notificacionesEnviadas = new ArrayList<>();
         mockStrategy = new MockNotificacionStrategy(notificacionesEnviadas);
-        notificacionService = new NotificacionService();
+        notificacionService = new NotificacionService();    
         notificacionService.cambiarEstrategiaNotificacion(mockStrategy);
         
         // Suscribir el servicio de notificaciones al partido

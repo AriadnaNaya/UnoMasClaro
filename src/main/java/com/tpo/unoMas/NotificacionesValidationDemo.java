@@ -120,7 +120,7 @@ public class NotificacionesValidationDemo {
     private static Partido crearPartido() {
         // Crear entidades necesarias
         Zona zona = crearZona();
-        Deporte deporte = new Deporte("Fútbol 5", "Deporte de equipo");
+        Deporte deporte = new Deporte("Fútbol 5", "Deporte de equipo", 10);
         
         // Crear partido
         partido = new Partido();
@@ -128,8 +128,6 @@ public class NotificacionesValidationDemo {
         partido.setFechaHora(LocalDate.now().plusDays(1).atTime(20, 0));
         partido.setZona(zona);
         partido.setDeporte(deporte);
-        partido.setMinJugadores(2);
-        partido.setMaxJugadores(4);
         
         return partido;
     }

@@ -124,7 +124,7 @@ public class PartidoController {
                 "partido", partidoDTO,
                 "estado", partido.getEstado().getClass().getSimpleName(),
                 "jugadores", partido.getJugadores().size(),
-                "necesita", partido.getMaxJugadores() - partido.getJugadores().size()
+                "necesita", partido.getDeporte().getCantidadJugadores() - partido.getJugadores().size()
             ));
         } catch (Exception e) {
             return ResponseEntity.notFound().build();

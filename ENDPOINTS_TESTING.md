@@ -77,6 +77,8 @@ Content-Type: application/json
   "deporteId": 1,
   "nivel": "INTERMEDIO",
   "organizadorId": 1,
+  "minJugadores": 10,
+  "maxJugadores": 22,
   "duracionMinutos": 90
 }
 ```

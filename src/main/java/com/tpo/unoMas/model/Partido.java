@@ -2,6 +2,8 @@ package com.tpo.unoMas.model;
 
 import com.tpo.unoMas.model.estado.EstadoPartido;
 import com.tpo.unoMas.model.estado.NecesitamosJugadores;
+import com.tpo.unoMas.model.strategy.emparejamiento.EmparejamientoPorCercania;
+import com.tpo.unoMas.model.strategy.emparejamiento.EstrategiaEmparejamiento;
 import com.tpo.unoMas.observer.Observable;
 import com.tpo.unoMas.observer.Observer;
 import jakarta.persistence.*;
@@ -51,6 +53,9 @@ public class Partido implements Observable {
     @Transient
     private EstadoPartido estado;
 
+    @Transient
+    private EstrategiaEmparejamiento estrategiaEmparejamiento;
+
     @NotNull(message = "El organizador no puede ser null")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "organizador_id", nullable = false)
@@ -77,22 +82,27 @@ public class Partido implements Observable {
     public Partido() {
         this.jugadores = new ArrayList<>();
         this.jugadoresConfirmados = new HashSet<>();
+        this.estrategiaEmparejamiento = new EmparejamientoPorCercania();
         this.estado = new NecesitamosJugadores();
         this.observers = new ArrayList<>();
     }
 
-    public Partido(String nombre, String descripcion, LocalDateTime fechaHora,
-                   Integer minJugadores, Integer maxJugadores, Zona zona) {
+    public Partido(String nombre, String descripcion, LocalDateTime fechaHora,Zona zona) {
         this.titulo=nombre;
         this.fechaHora = fechaHora;
         this.zona = zona;
         this.jugadores = new ArrayList<>();
         this.jugadoresConfirmados = new HashSet<>();
         this.estado = new NecesitamosJugadores();
+        this.estrategiaEmparejamiento = new EmparejamientoPorCercania();
+        this.observers = new ArrayList<>();
     }
 
 
     // Service Partido
+    // Hay un agregar jugador y un confirmar jugador porque la invitacion se envia a x cant de jugadores.
+    // Todos los que cumplan con la estrategia de emparejamiento se invitan.
+    // Luego se puede confirmar la asistencia de los que aceptaron la invitacion.
     public void agregarJugador(Jugador jugador) {
         Objects.requireNonNull(jugador, "El jugador no puede ser null");
         if (this.estado != null) {
@@ -111,32 +121,28 @@ public class Partido implements Observable {
         }
     }
 
-    //    Observer - Partido
-    @Override
-    public void attach(Observer observer) {
-        if (observers == null) {
-            observers = new ArrayList<>();
-        }
-        observers.add(observer);
+    public List<Jugador> invitarJugadores(List<Jugador> jugadores) {
+        return this.estrategiaEmparejamiento.encontrarJugadoresPotenciales(this, jugadores);
     }
 
-    @Override
-    public void detach(Observer observer) {
-        if (observers != null) {
-            observers.remove(observer);
-        }
-    }
 
-    @Override
-    public void notifyObservers() {
-        if (observers != null) {
-            for (Observer observer : observers) {
-                observer.update(this);
-            }
-        }
+    // Emparejamiento - Partido
+    public void cambiarEstrategiaEmparejamiento(EstrategiaEmparejamiento estrategiaEmparejamiento) {
+        this.estrategiaEmparejamiento = estrategiaEmparejamiento;
     }
-
+    
     //State Partido
+
+    public void confirmarAsistencia(Jugador jugador) {
+        if (!jugadores.contains(jugador))
+            throw new IllegalArgumentException("El jugador no está en la lista");
+
+        jugadoresConfirmados.add(jugador);
+
+        if (jugadoresConfirmados.size() == jugadores.size()) {
+            estado.confirmarPartido(this);
+        }
+    }
 
     public void iniciar() {
         if (this.estado != null) {
@@ -181,6 +187,32 @@ public class Partido implements Observable {
 
     }
 
+        //    Observer - Partido
+        @Override
+        public void attach(Observer observer) {
+            if (observers == null) {
+                observers = new ArrayList<>();
+            }
+            observers.add(observer);
+        }
+    
+        @Override
+        public void detach(Observer observer) {
+            if (observers != null) {
+                observers.remove(observer);
+            }
+        }
+    
+        @Override
+        public void notifyObservers() {
+            if (observers != null) {
+                for (Observer observer : observers) {
+                    observer.update(this);
+                }
+            }
+        }
+    
+
     // Metodos Utiles - Partido
     public boolean estaCompleto() {
         return jugadores.size() == deporte.getCantidadJugadores();
@@ -189,20 +221,6 @@ public class Partido implements Observable {
     public boolean estaEnElFuturo() {
         return fechaHora.isAfter(LocalDateTime.now());
     }
-
-
-
-    public void confirmarAsistencia(Jugador jugador) {
-        if (!jugadores.contains(jugador))
-            throw new IllegalArgumentException("El jugador no está en la lista");
-
-        jugadoresConfirmados.add(jugador);
-
-        if (jugadoresConfirmados.size() == jugadores.size()) {
-            estado.confirmarPartido(this);
-        }
-    }
-
 
     //Getter and Setter - Partido
 
@@ -260,10 +278,6 @@ public class Partido implements Observable {
 
     public EstadoPartido getEstado() {
         return estado;
-    }
-
-    public void setEstado(EstadoPartido estado) {
-        this.estado = estado;
     }
 
     public Jugador getOrganizador() {

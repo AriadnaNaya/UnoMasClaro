@@ -132,7 +132,7 @@ public class EstrategiasEmparejamientoDemo {
             Zona zonaLanus = new Zona("Lanús", "Lanús", null);
             
             // Crear deporte
-            Deporte futbol = new Deporte("Fútbol 5", "Deporte de equipo");
+            Deporte futbol = new Deporte("Fútbol 11", "Deporte de equipo", 22);
             
             // Crear organizador
             Jugador organizador = new Jugador("Ana", "ana@email.com", "password123", zonaPalermo);
@@ -144,8 +144,6 @@ public class EstrategiasEmparejamientoDemo {
             partidoFutbol.setZona(zonaPalermo);
             partidoFutbol.setDeporte(futbol);
             partidoFutbol.setNivel(Nivel.INTERMEDIO);
-            partidoFutbol.setMinJugadores(4);
-            partidoFutbol.setMaxJugadores(8);
             partidoFutbol.setOrganizador(organizador);
             
             // Crear jugadores registrados

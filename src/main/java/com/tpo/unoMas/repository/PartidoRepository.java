@@ -48,7 +48,7 @@ public interface PartidoRepository extends JpaRepository<Partido, Long> {
     /**
      * Buscar partidos que necesiten jugadores
      */
-    @Query("SELECT p FROM Partido p WHERE SIZE(p.jugadores) < p.maxJugadores")
+    @Query("SELECT p FROM Partido p WHERE SIZE(p.jugadores) < p.deporte.cantidadJugadores")
     List<Partido> findPartidosConEspacioDisponible();
     
     /**

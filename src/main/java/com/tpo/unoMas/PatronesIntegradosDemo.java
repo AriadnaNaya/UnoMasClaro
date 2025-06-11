@@ -21,7 +21,7 @@ public class PatronesIntegradosDemo {
         ubicacion.setLongitud(-58.3815591);
         
         Zona zona = new Zona("Palermo", "CABA", ubicacion);
-        Deporte deporte = new Deporte("Fútbol 5", "Fútbol de salón");
+        Deporte deporte = new Deporte("Fútbol 5", "Fútbol de salón", 10);
         
         // Crear jugadores
         Jugador organizador = crearJugador("Ana García", "ana@email.com", zona);
@@ -37,8 +37,6 @@ public class PatronesIntegradosDemo {
         partido.setDeporte(deporte);
         partido.setNivel(Nivel.INTERMEDIO);
         partido.setOrganizador(organizador);
-        partido.setMinJugadores(2);
-        partido.setMaxJugadores(4);
         partido.setDuracionMinutos(90);
         
         // ===== CONFIGURAR SISTEMA DE NOTIFICACIONES =====
@@ -72,7 +70,6 @@ public class PatronesIntegradosDemo {
         System.out.println("   Fecha: " + partido.getFechaHora().toLocalDate());
         System.out.println("   Zona: " + zona.getBarrio() + ", " + zona.getPartido());
         System.out.println("   Deporte: " + deporte.getNombre());
-        System.out.println("   Capacidad: " + partido.getMinJugadores() + "-" + partido.getMaxJugadores() + " jugadores");
         System.out.println("   Organizador: " + organizador.getNombre());
         System.out.println();
         
@@ -173,7 +170,7 @@ public class PatronesIntegradosDemo {
                                             DemoObserver metricsObserver) {
         System.out.println("\n📊 " + momento + ":");
         System.out.println("   🎯 Estado actual: " + partido.getEstado().getClass().getSimpleName());
-        System.out.println("   👥 Jugadores: " + partido.getJugadores().size() + "/" + partido.getMaxJugadores());
+        System.out.println("   👥 Jugadores: " + partido.getJugadores().size() + "/" + partido.getDeporte().getCantidadJugadores());
         System.out.println("   ✅ Confirmados: " + partido.getJugadoresConfirmados().size());
         System.out.println("   📧 Notificaciones enviadas: " + notificaciones.size());
         System.out.println("   📝 Logs generados: " + logObserver.contadorNotificaciones);

@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 /**
  * Servicio para gestión de jugadores
@@ -167,5 +169,28 @@ public class JugadorService {
         dto.setPartidosOrganizados(partidosOrganizados.size());
         
         return dto;
+    }
+
+    /**
+     * Obtener jugadores disponibles para un partido (excluyendo al organizador y sin solapamiento de horarios)
+     */
+    public List<Jugador> obtenerDisponiblesParaPartido(LocalDateTime fechaHora, int duracionMinutos, Long organizadorId) {
+        List<Jugador> jugadores = jugadorRepository.findAll().stream()
+            .filter(j -> !j.getId().equals(organizadorId))
+            .collect(Collectors.toList());
+        return jugadores.stream()
+            .filter(j -> estaDisponible(j, fechaHora, duracionMinutos))
+            .collect(Collectors.toList());
+    }
+
+    private boolean estaDisponible(Jugador jugador, LocalDateTime fechaHora, int duracionMinutos) {
+        List<Partido> partidos = partidoRepository.findByJugadoresContaining(jugador);
+        return partidos.stream().noneMatch(p -> seSolapan(p.getFechaHora(), p.getDuracionMinutos(), fechaHora, duracionMinutos));
+    }
+
+    private boolean seSolapan(LocalDateTime fecha1, int duracion1, LocalDateTime fecha2, int duracion2) {
+        LocalDateTime fin1 = fecha1.plusMinutes(duracion1);
+        LocalDateTime fin2 = fecha2.plusMinutes(duracion2);
+        return !fecha1.isAfter(fin2) && !fecha2.isAfter(fin1);
     }
 } 

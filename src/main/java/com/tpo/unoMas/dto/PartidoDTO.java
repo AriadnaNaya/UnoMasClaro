@@ -15,8 +15,6 @@ public class PartidoDTO {
     private String deporte;
     private Nivel nivel;
     private String organizador;
-    private Integer minJugadores;
-    private Integer maxJugadores;
     private Integer duracionMinutos;
     private String estado;
     private List<JugadorSimpleDTO> jugadores;
@@ -28,8 +26,7 @@ public class PartidoDTO {
 
     // Constructor completo
     public PartidoDTO(Long id, String titulo, LocalDateTime fechaHora, String zona, 
-                     String deporte, Nivel nivel, String organizador, Integer minJugadores, 
-                     Integer maxJugadores, Integer duracionMinutos, String estado) {
+                     String deporte, Nivel nivel, String organizador,Integer duracionMinutos, String estado) {
         this.id = id;
         this.titulo = titulo;
         this.fechaHora = fechaHora;
@@ -37,8 +34,6 @@ public class PartidoDTO {
         this.deporte = deporte;
         this.nivel = nivel;
         this.organizador = organizador;
-        this.minJugadores = minJugadores;
-        this.maxJugadores = maxJugadores;
         this.duracionMinutos = duracionMinutos;
         this.estado = estado;
     }
@@ -64,12 +59,6 @@ public class PartidoDTO {
 
     public String getOrganizador() { return organizador; }
     public void setOrganizador(String organizador) { this.organizador = organizador; }
-
-    public Integer getMinJugadores() { return minJugadores; }
-    public void setMinJugadores(Integer minJugadores) { this.minJugadores = minJugadores; }
-
-    public Integer getMaxJugadores() { return maxJugadores; }
-    public void setMaxJugadores(Integer maxJugadores) { this.maxJugadores = maxJugadores; }
 
     public Integer getDuracionMinutos() { return duracionMinutos; }
     public void setDuracionMinutos(Integer duracionMinutos) { this.duracionMinutos = duracionMinutos; }

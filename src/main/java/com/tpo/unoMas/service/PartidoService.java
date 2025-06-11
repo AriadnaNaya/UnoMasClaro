@@ -12,10 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Servicio principal para gestión de partidos
- * Implementa los requerimientos del TPO con patrones de diseño
- */
+
 @Service
 @Transactional
 public class PartidoService {
@@ -24,16 +21,16 @@ public class PartidoService {
     private PartidoRepository partidoRepository;
     
     @Autowired
-    private JugadorRepository jugadorRepository;
-    
-    @Autowired
     private ZonaRepository zonaRepository;
     
     @Autowired
     private DeporteRepository deporteRepository;
     
     @Autowired
-    private InvitacionService invitacionService;
+    private NotificacionService notificacionService;
+
+    @Autowired
+    private JugadorService jugadorService;
 
     /**
      * RF3: Crear un partido
@@ -41,18 +38,13 @@ public class PartidoService {
      */
     public Partido crearPartido(CrearPartidoRequest request) {
         // Validaciones
-        Jugador organizador = jugadorRepository.findById(request.getOrganizadorId())
-                .orElseThrow(() -> new RuntimeException("Organizador no encontrado"));
+        Jugador organizador = jugadorService.obtenerPorId(request.getOrganizadorId());
         
         Zona zona = zonaRepository.findById(request.getZonaId())
                 .orElseThrow(() -> new RuntimeException("Zona no encontrada"));
         
         Deporte deporte = deporteRepository.findById(request.getDeporteId())
                 .orElseThrow(() -> new RuntimeException("Deporte no encontrado"));
-
-        if (request.getMinJugadores() > request.getMaxJugadores()) {
-            throw new RuntimeException("Mínimo de jugadores no puede ser mayor al máximo");
-        }
 
         // Crear partido
         Partido partido = new Partido();
@@ -62,19 +54,24 @@ public class PartidoService {
         partido.setDeporte(deporte);
         partido.setNivel(request.getNivel());
         partido.setOrganizador(organizador);
-        partido.setMinJugadores(request.getMinJugadores());
-        partido.setMaxJugadores(request.getMaxJugadores());
         partido.setDuracionMinutos(request.getDuracionMinutos());
         
         // Estado inicial
-        partido.setEstado(new NecesitamosJugadores());
+        partido.cambiarEstado(new NecesitamosJugadores());
         
         // Guardar y agregar organizador
         partido = partidoRepository.save(partido);
         partido.agregarJugador(organizador);
-        
-        // El InvitacionService como Observer enviará invitaciones automáticamente
-        partido.notifyObservers();
+
+        // Obtener jugadores disponibles y enviar invitaciones
+        List<Jugador> disponibles = jugadorService.obtenerDisponiblesParaPartido(
+            partido.getFechaHora(),
+            partido.getDuracionMinutos(),
+            organizador.getId()
+        );
+        partido.invitarJugadores(disponibles);
+
+        notificacionService.notificarConTitulo(partido, "Partido creado", "Se ha creado un partido");
         
         return partidoRepository.save(partido);
     }
@@ -85,52 +82,6 @@ public class PartidoService {
     public List<Partido> buscarPartidos(BuscarPartidosRequest request) {
         List<Partido> partidos = partidoRepository.findAll();
         
-        return partidos.stream()
-                .filter(partido -> {
-                    // Filtrar por zona
-                    if (request.getZonaId() != null && 
-                        !partido.getZona().getId().equals(request.getZonaId())) {
-                        return false;
-                    }
-                    
-                    // Filtrar por deporte
-                    if (request.getDeporteId() != null && 
-                        !partido.getDeporte().getId().equals(request.getDeporteId())) {
-                        return false;
-                    }
-                    
-                    // Filtrar por nivel
-                    if (request.getNivel() != null && 
-                        partido.getNivel() != request.getNivel()) {
-                        return false;
-                    }
-                    
-                    // Filtrar por rango de fechas
-                    if (request.getFechaDesde() != null && 
-                        partido.getFechaHora().isBefore(request.getFechaDesde())) {
-                        return false;
-                    }
-                    
-                    if (request.getFechaHasta() != null && 
-                        partido.getFechaHora().isAfter(request.getFechaHasta())) {
-                        return false;
-                    }
-                    
-                    // Filtrar por espacios disponibles
-                    if (request.getSoloConEspaciosDisponibles() && 
-                        partido.getJugadores().size() >= partido.getMaxJugadores()) {
-                        return false;
-                    }
-                    
-                    // Filtrar por estado
-                    if (request.getEstado() != null && 
-                        !partido.getEstado().getClass().getSimpleName().equals(request.getEstado())) {
-                        return false;
-                    }
-                    
-                    return true;
-                })
-                .collect(Collectors.toList());
     }
 
     /**
@@ -146,9 +97,7 @@ public class PartidoService {
      */
     public void unirseAPartido(Long partidoId, Long jugadorId) {
         Partido partido = obtenerPorId(partidoId);
-        Jugador jugador = jugadorRepository.findById(jugadorId)
-                .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
-        
+        Jugador jugador = jugadorService.obtenerPorId(jugadorId);
         partido.agregarJugador(jugador);
         partidoRepository.save(partido);
     }
@@ -158,9 +107,7 @@ public class PartidoService {
      */
     public void salirseDePartido(Long partidoId, Long jugadorId) {
         Partido partido = obtenerPorId(partidoId);
-        Jugador jugador = jugadorRepository.findById(jugadorId)
-                .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
-        
+        Jugador jugador = jugadorService.obtenerPorId(jugadorId);
         partido.removerJugador(jugador);
         partidoRepository.save(partido);
     }
@@ -191,13 +138,10 @@ public class PartidoService {
      */
     public void confirmarParticipacion(Long partidoId, Long jugadorId) {
         Partido partido = obtenerPorId(partidoId);
-        Jugador jugador = jugadorRepository.findById(jugadorId)
-                .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
-        
+        Jugador jugador = jugadorService.obtenerPorId(jugadorId);
         if (!partido.getJugadores().contains(jugador)) {
             throw new RuntimeException("El jugador no está en este partido");
         }
-        
         partido.confirmarAsistencia(jugador); // Usar método original existente
         partidoRepository.save(partido);
     }
@@ -206,9 +150,7 @@ public class PartidoService {
      * Obtener partidos por jugador
      */
     public List<Partido> obtenerPartidosPorJugador(Long jugadorId) {
-        Jugador jugador = jugadorRepository.findById(jugadorId)
-                .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
-        
+        Jugador jugador = jugadorService.obtenerPorId(jugadorId);
         return partidoRepository.findByJugadoresContaining(jugador);
     }
 
@@ -228,8 +170,6 @@ public class PartidoService {
         dto.setDeporte(partido.getDeporte().getNombre());
         dto.setNivel(partido.getNivel());
         dto.setOrganizador(partido.getOrganizador().getNombre());
-        dto.setMinJugadores(partido.getMinJugadores());
-        dto.setMaxJugadores(partido.getMaxJugadores());
         dto.setDuracionMinutos(partido.getDuracionMinutos());
         dto.setEstado(partido.getEstado().getClass().getSimpleName());
         
@@ -255,7 +195,7 @@ public class PartidoService {
                 .collect(Collectors.toList());
         dto.setJugadoresConfirmados(confirmadosDTO);
         
-        dto.setJugadoresNecesarios(partido.getMaxJugadores() - partido.getJugadores().size());
+        dto.setJugadoresNecesarios(partido.getDeporte().getCantidadJugadores() - partido.getJugadores().size());
         
         return dto;
     }

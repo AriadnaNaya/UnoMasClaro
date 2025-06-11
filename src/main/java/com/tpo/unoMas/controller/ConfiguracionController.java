@@ -120,13 +120,13 @@ public class ConfiguracionController {
             // Crear deportes de prueba si no existen
             if (deporteRepository.count() == 0) {
                 // Usar el constructor correcto de Deporte
-                Deporte futbol = new Deporte("Fútbol", "Deporte de equipo jugado con los pies");
+                Deporte futbol = new Deporte("Fútbol 11", "Deporte de equipo jugado con los pies", 22);
                 deporteRepository.save(futbol);
 
-                Deporte tenis = new Deporte("Tenis", "Deporte de raqueta individual o por parejas");
+                Deporte tenis = new Deporte("Tenis", "Deporte de raqueta individual o por parejas", 2);
                 deporteRepository.save(tenis);
 
-                Deporte basquet = new Deporte("Básquet", "Deporte de equipo jugado con las manos");
+                Deporte basquet = new Deporte("Básquet", "Deporte de equipo jugado con las manos", 10);
                 deporteRepository.save(basquet);
             }
 
