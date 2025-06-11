@@ -33,6 +33,9 @@ public class JugadorService {
     @Autowired
     private PartidoRepository partidoRepository;
 
+    @Autowired
+    private DeporteJugadorRepository deporteJugadorRepository;
+
     /**
      * Obtener jugador por ID
      */
@@ -99,27 +102,6 @@ public class JugadorService {
         return jugadorRepository.save(jugador);
     }
 
-    /**
-     * Obtener estadísticas del jugador
-     */
-    public Map<String, Object> obtenerEstadisticas(Long jugadorId) {
-        Jugador jugador = obtenerPorId(jugadorId);
-        
-        // Obtener partidos donde participó
-        List<Partido> partidosJugados = partidoRepository.findByJugadoresContaining(jugador);
-        
-        // Obtener partidos que organizó
-        List<Partido> partidosOrganizados = partidoRepository.findByOrganizador(jugador);
-        
-        Map<String, Object> estadisticas = new HashMap<>();
-        estadisticas.put("partidosJugados", partidosJugados.size());
-        estadisticas.put("partidosOrganizados", partidosOrganizados.size());
-        estadisticas.put("totalPartidos", partidosJugados.size() + partidosOrganizados.size());
-        estadisticas.put("zona", jugador.getZona().getNombre());
-        estadisticas.put("nivel", jugador.getNivel());
-        
-        return estadisticas;
-    }
 
     /**
      * Convertir Jugador a DTO
@@ -133,12 +115,7 @@ public class JugadorService {
         dto.setNivel(jugador.getNivel());
         dto.setTelefono(jugador.getTelefono());
         
-        // Agregar estadísticas
-        List<Partido> partidosJugados = partidoRepository.findByJugadoresContaining(jugador);
-        List<Partido> partidosOrganizados = partidoRepository.findByOrganizador(jugador);
-        
-        dto.setPartidosJugados(partidosJugados.size());
-        dto.setPartidosOrganizados(partidosOrganizados.size());
+
         
         return dto;
     }
@@ -171,6 +148,58 @@ public class JugadorService {
         if (jugadorRepository.existsByEmail(jugador.getEmail())) {
             throw new RuntimeException("Ya existe un jugador con ese email");
         }
+        return jugadorRepository.save(jugador);
+    }
+
+    /**
+     * Agregar un deporte favorito al jugador
+     */
+    public Jugador agregarDeporteFavorito(Long jugadorId, Long deporteId, Nivel nivel) {
+        Jugador jugador = obtenerPorId(jugadorId);
+        Deporte deporte = deporteRepository.findById(deporteId)
+                .orElseThrow(() -> new RuntimeException("Deporte no encontrado"));
+        DeporteJugador dj = deporteJugadorRepository.findByJugadorAndDeporte(jugador, deporte);
+        if (dj == null) {
+            dj = new DeporteJugador(jugador, deporte, nivel, true);
+            jugador.getDeportes().add(dj);
+        } else if (dj.esFavorito()) {
+            throw new RuntimeException("El deporte ya está marcado como favorito para este jugador");
+        } else {
+            dj.setEsFavorito(true);
+            dj.setNivel(nivel);
+        }
+        deporteJugadorRepository.save(dj);
+        return jugadorRepository.save(jugador);
+    }
+
+    /**
+     * Eliminar un deporte de los favoritos del jugador
+     */
+    public Jugador eliminarDeporteFavorito(Long jugadorId, Long deporteId) {
+        Jugador jugador = obtenerPorId(jugadorId);
+        Deporte deporte = deporteRepository.findById(deporteId)
+                .orElseThrow(() -> new RuntimeException("Deporte no encontrado"));
+        DeporteJugador dj = deporteJugadorRepository.findByJugadorAndDeporte(jugador, deporte);
+        if (dj != null) {
+            dj.setEsFavorito(false);
+            deporteJugadorRepository.save(dj);
+        }
+        return jugadorRepository.save(jugador);
+    }
+
+    /**
+     * Actualizar el nivel de un deporte favorito del jugador
+     */
+    public Jugador actualizarNivelDeporte(Long jugadorId, Long deporteId, Nivel nivel) {
+        Jugador jugador = obtenerPorId(jugadorId);
+        Deporte deporte = deporteRepository.findById(deporteId)
+                .orElseThrow(() -> new RuntimeException("Deporte no encontrado"));
+        DeporteJugador dj = deporteJugadorRepository.findByJugadorAndDeporte(jugador, deporte);
+        if (dj == null) {
+            throw new RuntimeException("El jugador no tiene este deporte asociado");
+        }
+        dj.setNivel(nivel);
+        deporteJugadorRepository.save(dj);
         return jugadorRepository.save(jugador);
     }
 } 

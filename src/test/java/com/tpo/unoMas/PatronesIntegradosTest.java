@@ -5,6 +5,12 @@ import com.tpo.unoMas.model.estado.*;
 import com.tpo.unoMas.model.observer.Observer;
 import com.tpo.unoMas.model.strategy.notificacion.INotificacionStrategy;
 import com.tpo.unoMas.service.NotificacionService;
+import com.tpo.unoMas.model.Nivel;
+import com.tpo.unoMas.model.Deporte;
+import com.tpo.unoMas.model.Jugador;
+import com.tpo.unoMas.model.DeporteJugador;
+import com.tpo.unoMas.repository.DeporteJugadorRepository;
+import com.tpo.unoMas.service.JugadorService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -244,6 +250,44 @@ public class PatronesIntegradosTest {
         System.out.println("✓ PushAdapter: " + pushAdapter.ultimoTitulo + " - " + pushAdapter.ultimoMensaje);
         
         System.out.println("✓ Patrón Adapter funciona con diferentes tipos de notificación!");
+    }
+
+    @Test
+    public void testAgregarDeporteFavoritoNoDuplicado() {
+        JugadorService jugadorService = getJugadorService();
+        Jugador jugador = crearJugadorDePrueba();
+        Deporte deporte = crearDeporteDePrueba();
+        jugadorService.agregarDeporteFavorito(jugador.getId(), deporte.getId(), Nivel.INTERMEDIO);
+        // Intentar agregar el mismo deporte como favorito otra vez debe lanzar excepción
+        assertThrows(RuntimeException.class, () -> {
+            jugadorService.agregarDeporteFavorito(jugador.getId(), deporte.getId(), Nivel.INTERMEDIO);
+        });
+    }
+
+    @Test
+    public void testAgregarYEliminarDeporteFavorito() {
+        JugadorService jugadorService = getJugadorService();
+        Jugador jugador = crearJugadorDePrueba();
+        Deporte deporte = crearDeporteDePrueba();
+        jugadorService.agregarDeporteFavorito(jugador.getId(), deporte.getId(), Nivel.INTERMEDIO);
+        jugadorService.eliminarDeporteFavorito(jugador.getId(), deporte.getId());
+        // El deporte debe seguir existiendo pero no ser favorito
+        DeporteJugadorRepository repo = getDeporteJugadorRepository();
+        DeporteJugador dj = repo.findByJugadorAndDeporte(jugador, deporte);
+        assertNotNull(dj);
+        assertFalse(dj.esFavorito());
+    }
+
+    @Test
+    public void testActualizarNivelDeporteFavorito() {
+        JugadorService jugadorService = getJugadorService();
+        Jugador jugador = crearJugadorDePrueba();
+        Deporte deporte = crearDeporteDePrueba();
+        jugadorService.agregarDeporteFavorito(jugador.getId(), deporte.getId(), Nivel.INTERMEDIO);
+        jugadorService.actualizarNivelDeporte(jugador.getId(), deporte.getId(), Nivel.AVANZADO);
+        DeporteJugadorRepository repo = getDeporteJugadorRepository();
+        DeporteJugador dj = repo.findByJugadorAndDeporte(jugador, deporte);
+        assertEquals(Nivel.AVANZADO, dj.getNivel());
     }
 
     // ===== CLASES MOCK PARA TESTING =====

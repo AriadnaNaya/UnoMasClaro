@@ -146,7 +146,8 @@ public class PartidoController {
     @GetMapping("/buscar/{jugadorId}")
     public ResponseEntity<?> obtenerPartidosPorJugador(@PathVariable Long jugadorId) {
         try {
-            List<Partido> partidos = partidoService.obtenerPartidosPorJugador(jugadorId);
+            Jugador jugador = jugadorService.obtenerPorId(jugadorId);
+            List<Partido> partidos = partidoService.obtenerPartidosPorJugador(jugador);
             List<PartidoDTO> partidosDTO = partidos.stream()
                     .map(partidoService::convertirADTO)
                     .toList();
@@ -246,7 +247,8 @@ public class PartidoController {
     @GetMapping("/compatibles/{jugadorId}")
     public ResponseEntity<?> buscarPartidosCompatiblesParaJugador(@PathVariable Long jugadorId) {
         try {
-            List<Partido> partidos = partidoService.buscarPartidosCompatiblesParaJugador(jugadorId);
+            Jugador jugador = jugadorService.obtenerPorId(jugadorId);
+            List<Partido> partidos = partidoService.buscarPartidosCompatiblesParaJugador(jugador);
             List<PartidoDTO> partidosDTO = partidos.stream()
                 .map(partidoService::convertirADTO)
                 .toList();

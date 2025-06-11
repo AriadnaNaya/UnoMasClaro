@@ -48,8 +48,7 @@ public class PartidoService {
         return todosLosPartidos;
     }
 
-    public List<Partido> buscarPartidosCompatiblesParaJugador(Long jugadorId) {
-        Jugador jugador = obtenerPorId(jugadorId);
+    public List<Partido> buscarPartidosCompatiblesParaJugador(Jugador jugador) {
         List<Partido> todosLosPartidos = partidoRepository.findAll();
         return todosLosPartidos.stream()
             .filter(partido -> {
@@ -124,8 +123,7 @@ public class PartidoService {
     /**
      * Obtener partidos por jugador
      */
-    public List<Partido> obtenerPartidosPorJugador(Long jugadorId) {
-        Jugador jugador = obtenerPorId(jugadorId);
+    public List<Partido> obtenerPartidosPorJugador(Jugador jugador) {
         return partidoRepository.findByJugadoresContaining(jugador);
     }
 
