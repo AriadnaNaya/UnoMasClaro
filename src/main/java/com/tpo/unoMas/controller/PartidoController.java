@@ -4,7 +4,14 @@ import com.tpo.unoMas.dto.PartidoDTO;
 import com.tpo.unoMas.dto.CrearPartidoRequest;
 import com.tpo.unoMas.dto.BuscarPartidosRequest;
 import com.tpo.unoMas.model.Partido;
+import com.tpo.unoMas.model.Jugador;
+import com.tpo.unoMas.model.strategy.emparejamiento.EmparejamientoPorHistorial;
 import com.tpo.unoMas.service.PartidoService;
+import com.tpo.unoMas.service.JugadorService;
+import com.tpo.unoMas.repository.ZonaRepository;
+import com.tpo.unoMas.repository.DeporteRepository;
+import com.tpo.unoMas.model.Zona;
+import com.tpo.unoMas.model.Deporte;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +40,15 @@ public class PartidoController {
 
     @Autowired
     private PartidoService partidoService;
+    
+    @Autowired
+    private JugadorService jugadorService;
+    
+    @Autowired
+    private ZonaRepository zonaRepository;
+    
+    @Autowired
+    private DeporteRepository deporteRepository;
     
 
     /**
@@ -63,11 +79,18 @@ public class PartidoController {
     })
     public ResponseEntity<?> crearPartido(@Valid @RequestBody CrearPartidoRequest request) {
         try {
-            Partido partido = partidoService.crearPartido(request);
-            
-            // El InvitacionService como Observer enviará invitaciones automáticamente
+            Jugador organizador = jugadorService.obtenerPorId(request.getOrganizadorId());
+            Zona zona = zonaRepository.findById(request.getZonaId())
+                .orElseThrow(() -> new RuntimeException("Zona no encontrada"));
+            Deporte deporte = deporteRepository.findById(request.getDeporteId())
+                .orElseThrow(() -> new RuntimeException("Deporte no encontrado"));
+            List<Jugador> disponibles = jugadorService.obtenerDisponiblesParaPartido(
+                request.getFechaHora(),
+                request.getDuracionMinutos(),
+                request.getOrganizadorId()
+            );
+            Partido partido = partidoService.crearPartido(request, organizador, zona, deporte, disponibles);
             PartidoDTO partidoDTO = partidoService.convertirADTO(partido);
-            
             return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                 "mensaje", "Partido creado exitosamente",
                 "partido", partidoDTO,
@@ -155,18 +178,11 @@ public class PartidoController {
      */
     @PostMapping("/{id}/unirse")
     public ResponseEntity<?> unirseAPartido(@PathVariable Long id, @RequestParam Long jugadorId) {
-        try {
-            partidoService.unirseAPartido(id, jugadorId);
-            
-            return ResponseEntity.ok(Map.of(
-                "mensaje", "Te has unido al partido exitosamente"
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of(
-                "error", "No se pudo unir al partido",
-                "detalle", e.getMessage()
-            ));
-        }
+        Jugador jugador = jugadorService.obtenerPorId(jugadorId);
+        partidoService.unirseAPartido(id, jugador);
+        return ResponseEntity.ok(Map.of(
+            "mensaje", "Te has unido al partido exitosamente"
+        ));
     }
 
     /**
@@ -174,18 +190,11 @@ public class PartidoController {
      */
     @PostMapping("/{id}/salirse")
     public ResponseEntity<?> salirseDePartido(@PathVariable Long id, @RequestParam Long jugadorId) {
-        try {
-            partidoService.salirseDePartido(id, jugadorId);
-            
-            return ResponseEntity.ok(Map.of(
-                "mensaje", "Te has salido del partido"
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of(
-                "error", "No se pudo salir del partido",
-                "detalle", e.getMessage()
-            ));
-        }
+        Jugador jugador = jugadorService.obtenerPorId(jugadorId);
+        partidoService.salirseDePartido(id, jugador);
+        return ResponseEntity.ok(Map.of(
+            "mensaje", "Te has salido del partido"
+        ));
     }
 
     /**
@@ -213,18 +222,11 @@ public class PartidoController {
      */
     @PostMapping("/{id}/confirmar")
     public ResponseEntity<?> confirmarParticipacion(@PathVariable Long id, @RequestParam Long jugadorId) {
-        try {
-            partidoService.confirmarParticipacion(id, jugadorId);
-            
-            return ResponseEntity.ok(Map.of(
-                "mensaje", "Participación confirmada"
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of(
-                "error", "No se pudo confirmar participación",
-                "detalle", e.getMessage()
-            ));
-        }
+        Jugador jugador = jugadorService.obtenerPorId(jugadorId);
+        partidoService.confirmarParticipacion(id, jugador);
+        return ResponseEntity.ok(Map.of(
+            "mensaje", "Participación confirmada"
+        ));
     }
 
 
@@ -253,4 +255,17 @@ public class PartidoController {
     // ELIMINADO: enviarInvitaciones manual
     // Las invitaciones se envían automáticamente cuando se crea un partido
     // a través del patrón Observer (InvitacionService)
+
+    // Endpoint de ejemplo para emparejamiento por historial
+    @GetMapping("/{partidoId}/emparejamiento-historial")
+    public ResponseEntity<?> emparejarPorHistorial(@PathVariable Long partidoId) {
+        Partido partido = partidoService.obtenerPorId(partidoId);
+        List<Jugador> disponibles = jugadorService.obtenerTodos();
+        EmparejamientoPorHistorial estrategia = new EmparejamientoPorHistorial();
+        List<Jugador> compatibles = partidoService.encontrarJugadoresPorHistorial(partido, disponibles, estrategia);
+        return ResponseEntity.ok(Map.of(
+            "jugadoresCompatibles", compatibles,
+            "cantidad", compatibles.size()
+        ));
+    }
 }

@@ -13,9 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.ArrayList;
 
 import com.tpo.unoMas.model.strategy.emparejamiento.EmparejamientoPorCercania;
 import com.tpo.unoMas.model.strategy.emparejamiento.EstrategiaEmparejamiento;
+import com.tpo.unoMas.model.strategy.emparejamiento.EmparejamientoPorHistorial;
 
 @Service
 @Transactional
@@ -33,24 +37,17 @@ public class PartidoService {
     @Autowired
     private NotificacionService notificacionService;
 
-    @Autowired
-    private JugadorService jugadorService;
-
     /**
      * RF3: Crear un partido
      * Estado inicial: NecesitamosJugadores
      */
-    public Partido crearPartido(CrearPartidoRequest request) {
-        // Validaciones
-        Jugador organizador = jugadorService.obtenerPorId(request.getOrganizadorId());
-        
-        Zona zona = zonaRepository.findById(request.getZonaId())
-                .orElseThrow(() -> new RuntimeException("Zona no encontrada"));
-        
-        Deporte deporte = deporteRepository.findById(request.getDeporteId())
-                .orElseThrow(() -> new RuntimeException("Deporte no encontrado"));
-
-        // Crear partido
+    public Partido crearPartido(
+        CrearPartidoRequest request,
+        Jugador organizador,
+        Zona zona,
+        Deporte deporte,
+        List<Jugador> disponibles
+    ) {
         Partido partido = new Partido();
         partido.setTitulo(request.getTitulo());
         partido.setFechaHora(request.getFechaHora());
@@ -59,24 +56,11 @@ public class PartidoService {
         partido.setNivel(request.getNivel());
         partido.setOrganizador(organizador);
         partido.setDuracionMinutos(request.getDuracionMinutos());
-        
-        // Estado inicial
         partido.cambiarEstado(new NecesitamosJugadores());
-        
-        // Guardar y agregar organizador
         partido = partidoRepository.save(partido);
         partido.agregarJugador(organizador);
-
-        // Obtener jugadores disponibles y enviar invitaciones
-        List<Jugador> disponibles = jugadorService.obtenerDisponiblesParaPartido(
-            partido.getFechaHora(),
-            partido.getDuracionMinutos(),
-            organizador.getId()
-        );
         partido.invitarJugadores(disponibles);
-
         notificacionService.notificarConTitulo(partido, "Partido creado", "Se ha creado un partido");
-        
         return partidoRepository.save(partido);
     }
 
@@ -87,7 +71,7 @@ public class PartidoService {
     }
 
     public List<Partido> buscarPartidosCompatiblesParaJugador(Long jugadorId) {
-        Jugador jugador = jugadorService.obtenerPorId(jugadorId);
+        Jugador jugador = obtenerPorId(jugadorId);
         List<Partido> todosLosPartidos = partidoRepository.findAll();
         return todosLosPartidos.stream()
             .filter(partido -> {
@@ -111,9 +95,8 @@ public class PartidoService {
     /**
      * Unirse a un partido
      */
-    public void unirseAPartido(Long partidoId, Long jugadorId) {
+    public void unirseAPartido(Long partidoId, Jugador jugador) {
         Partido partido = obtenerPorId(partidoId);
-        Jugador jugador = jugadorService.obtenerPorId(jugadorId);
         partido.agregarJugador(jugador);
         partidoRepository.save(partido);
     }
@@ -121,9 +104,8 @@ public class PartidoService {
     /**
      * Salirse de un partido
      */
-    public void salirseDePartido(Long partidoId, Long jugadorId) {
+    public void salirseDePartido(Long partidoId, Jugador jugador) {
         Partido partido = obtenerPorId(partidoId);
-        Jugador jugador = jugadorService.obtenerPorId(jugadorId);
         partido.removerJugador(jugador);
         partidoRepository.save(partido);
     }
@@ -152,13 +134,12 @@ public class PartidoService {
     /**
      * Confirmar participación en partido
      */
-    public void confirmarParticipacion(Long partidoId, Long jugadorId) {
+    public void confirmarParticipacion(Long partidoId, Jugador jugador) {
         Partido partido = obtenerPorId(partidoId);
-        Jugador jugador = jugadorService.obtenerPorId(jugadorId);
         if (!partido.getJugadores().contains(jugador)) {
             throw new RuntimeException("El jugador no está en este partido");
         }
-        partido.confirmarAsistencia(jugador); // Usar método original existente
+        partido.confirmarAsistencia(jugador);
         partidoRepository.save(partido);
     }
 
@@ -166,7 +147,7 @@ public class PartidoService {
      * Obtener partidos por jugador
      */
     public List<Partido> obtenerPartidosPorJugador(Long jugadorId) {
-        Jugador jugador = jugadorService.obtenerPorId(jugadorId);
+        Jugador jugador = obtenerPorId(jugadorId);
         return partidoRepository.findByJugadoresContaining(jugador);
     }
 
@@ -216,9 +197,16 @@ public class PartidoService {
         return dto;
     }
 
-    public JugadorService getJugadorService() {
-        return this.jugadorService;
+    public List<Jugador> encontrarJugadoresPorHistorial(Partido partido, List<Jugador> jugadoresDisponibles, EmparejamientoPorHistorial estrategia) {
+        return jugadoresDisponibles.stream()
+            .filter(jugador -> {
+                List<Partido> jugados = partidoRepository.findByJugadoresContaining(jugador);
+                List<Partido> organizados = partidoRepository.findByOrganizador(jugador);
+                Set<Partido> historial = new HashSet<>(jugados);
+                historial.addAll(organizados);
+                return estrategia.esCompatible(partido, new ArrayList<>(historial));
+            })
+            .collect(Collectors.toList());
     }
-
 
 } 

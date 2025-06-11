@@ -37,9 +37,8 @@ public class Partido implements Observable {
     @JoinColumn(name = "deporte_id", nullable = false)
     private Deporte deporte;
 
-    @NotNull(message = "El nivel no puede ser nulo")
     @Enumerated(EnumType.STRING)
-    @Column(name = "nivel_id", nullable = false)
+    @Column(name = "nivel_id")
     private Nivel nivel;
 
     @ManyToMany

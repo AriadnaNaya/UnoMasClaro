@@ -61,7 +61,14 @@ public class EmparejamientoPorHistorial implements EstrategiaEmparejamiento {
     }
 
     @Override
-    public boolean esCompatible(Partido partido, Jugador jugador) {
-        return esJugadorCompatible(jugador, partido) && tieneHistorialRelevante(jugador, partido);
+    public boolean esCompatible(Partido partido, List<Partido> historial) {
+        boolean haJugadoConOrganizador = historial.stream()
+            .anyMatch(p -> p.getJugadores().contains(partido.getOrganizador()) ||
+                           p.getOrganizador().equals(partido.getOrganizador()));
+
+        boolean haOrganizadoMismoDeporte = historial.stream()
+            .anyMatch(p -> p.getDeporte().equals(partido.getDeporte()));
+
+        return haJugadoConOrganizador || haOrganizadoMismoDeporte;
     }
 } 

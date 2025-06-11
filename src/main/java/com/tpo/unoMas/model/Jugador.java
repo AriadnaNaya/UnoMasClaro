@@ -52,46 +52,14 @@ public class Jugador {
     @OneToMany(mappedBy = "jugador", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DeporteJugador> deportes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "organizador", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Partido> partidosOrganizados = new ArrayList<>();
-
-    @ManyToMany
-    @JoinTable(
-            name = "jugador_partidos",
-            joinColumns = @JoinColumn(name = "jugador_id"),
-            inverseJoinColumns = @JoinColumn(name = "partido_id")
-    )
-    private Set<Partido> partidosParticipados = new HashSet<>();
-
-    // Campo comentado - ya no se usa este patrón Strategy en Jugador
-    // @Transient
-    // private EstrategiaEmparejamiento estrategiaEmparejamiento;
-
     public Jugador() {
-        // this.estrategiaEmparejamiento = new EstrategiaPorNivel(); // Estrategia por defecto
+        
     }
     public Jugador(String nombre, String email, String password, Zona zona) {
         this.nombre = nombre;
         this.email = email;
         this.password = password;
         this.zona = zona;
-    }
-
-    // Strategy Jugador - métodos comentados ya no se usan
-
-    // public void cambiarEstrategiaEmparejamiento(EstrategiaEmparejamiento estrategia) {
-    //     this.estrategiaEmparejamiento = Objects.requireNonNull(estrategia, "La estrategia no puede ser null");
-    // }
-
-    // State Jugador
-    public void agregarPartido(Partido partido) {
-        Objects.requireNonNull(partido, "El partido no puede ser null");
-        this.partidosParticipados.add(partido);
-    }
-
-    public void removerPartido(Partido partido) {
-        Objects.requireNonNull(partido, "El partido no puede ser null");
-        this.partidosParticipados.remove(partido);
     }
 
     public void agregarAFavoritos(Deporte deporte){
@@ -191,23 +159,4 @@ public class Jugador {
         this.deportes = deportes;
     }
 
-    public List<Partido> getPartidosOrganizados() {
-        return partidosOrganizados;
-    }
-
-    public void setPartidosOrganizados(List<Partido> partidosOrganizados) {
-        this.partidosOrganizados = partidosOrganizados;
-    }
-
-    public Set<Partido> getPartidosParticipados() {
-        return partidosParticipados;
-    }
-
-    public void setPartidosParticipados(Set<Partido> partidosParticipados) {
-        this.partidosParticipados = partidosParticipados;
-    }
-
-    // public EstrategiaEmparejamiento getEstrategiaEmparejamiento() {
-    //     return estrategiaEmparejamiento;
-    // }
 }
