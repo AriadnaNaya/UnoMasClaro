@@ -2,9 +2,10 @@ package com.tpo.unoMas;
 
 import com.tpo.unoMas.model.*;
 import com.tpo.unoMas.model.estado.*;
+import com.tpo.unoMas.observer.Observer;
 import com.tpo.unoMas.model.strategy.notificacion.INotificacionStrategy;
 import com.tpo.unoMas.service.NotificacionService;
-import com.tpo.unoMas.observer.Observer;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;

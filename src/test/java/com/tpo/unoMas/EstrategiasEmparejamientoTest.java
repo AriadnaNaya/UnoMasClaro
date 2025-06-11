@@ -1,5 +1,6 @@
 package com.tpo.unoMas;
 
+import com.tpo.unoMas.demo.DemoUtils;
 import com.tpo.unoMas.model.*;
 import com.tpo.unoMas.model.strategy.emparejamiento.*;
 import com.tpo.unoMas.service.NotificacionService;
@@ -7,7 +8,6 @@ import com.tpo.unoMas.model.strategy.notificacion.INotificacionStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import com.tpo.unoMas.demo.DemoUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
