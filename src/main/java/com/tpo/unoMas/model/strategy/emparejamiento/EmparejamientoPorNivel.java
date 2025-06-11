@@ -71,4 +71,9 @@ public class EmparejamientoPorNivel implements EstrategiaEmparejamiento {
         
         return practicaDeporte && noEsOrganizador && noEstaEnPartido;
     }
+
+    @Override
+    public boolean esCompatible(Partido partido, Jugador jugador) {
+        return esJugadorCompatible(jugador, partido) && tieneNivelCompatible(jugador, partido);
+    }
 } 

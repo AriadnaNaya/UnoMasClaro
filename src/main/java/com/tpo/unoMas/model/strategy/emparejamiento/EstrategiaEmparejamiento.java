@@ -24,4 +24,6 @@ public interface EstrategiaEmparejamiento {
      * @return Descripción del algoritmo de emparejamiento
      */
     String getDescripcion();
+
+    boolean esCompatible(Partido partido, Jugador jugador);
 } 

@@ -47,4 +47,14 @@ public class EmparejamientoPorCercania implements EstrategiaEmparejamiento {
         
         return practicaDeporte && noEsOrganizador && noEstaEnPartido;
     }
+
+    @Override
+    public boolean esCompatible(Partido partido, Jugador jugador) {
+        if (partido.getZona() == null) {
+            return esJugadorCompatible(jugador, partido);
+        }
+        return jugador.getZona() != null &&
+               jugador.getZona().getPartido().equals(partido.getZona().getPartido()) &&
+               esJugadorCompatible(jugador, partido);
+    }
 } 

@@ -304,6 +304,9 @@ public class Partido implements Observable {
         this.jugadoresConfirmados = jugadoresConfirmados;
     }
 
+    public EstrategiaEmparejamiento getEstrategiaEmparejamiento() {
+        return this.estrategiaEmparejamiento;
+    }
 
     @Override
     public String toString() {

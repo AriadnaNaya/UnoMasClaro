@@ -8,10 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.tpo.unoMas.model.strategy.emparejamiento.EmparejamientoPorCercania;
+import com.tpo.unoMas.model.strategy.emparejamiento.EstrategiaEmparejamiento;
 
 @Service
 @Transactional
@@ -76,13 +77,25 @@ public class PartidoService {
         return partidoRepository.save(partido);
     }
 
+    
     /**
-     * RF2: Búsqueda de partidos
+     * Devuelve los partidos donde el jugador sería considerado potencial según la estrategia de emparejamiento del partido
      */
-    public List<Partido> buscarPartidos(BuscarPartidosRequest request) {
-        List<Partido> partidos = partidoRepository.findAll();
-        
+    public List<Partido> buscarPartidosCompatiblesParaJugador(Long jugadorId) {
+        Jugador jugador = jugadorService.obtenerPorId(jugadorId);
+        List<Partido> todosLosPartidos = partidoRepository.findAll();
+        return todosLosPartidos.stream()
+            .filter(partido -> {
+                EstrategiaEmparejamiento estrategia = partido.getEstrategiaEmparejamiento();
+                if (estrategia == null) {
+                    estrategia = new EmparejamientoPorCercania();
+                }
+                return estrategia.esCompatible(partido, jugador);
+            })
+            .collect(Collectors.toList());
     }
+
+
 
     /**
      * Obtener partido por ID
@@ -199,4 +212,9 @@ public class PartidoService {
         
         return dto;
     }
+
+    public JugadorService getJugadorService() {
+        return this.jugadorService;
+    }
+
 } 

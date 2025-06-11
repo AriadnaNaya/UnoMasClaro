@@ -37,8 +37,6 @@ public class PartidoController {
     @Autowired
     private PartidoService partidoService;
     
-    @Autowired
-    private InvitacionService invitacionService;
 
     /**
      * RF3: Crear un partido
@@ -226,6 +224,28 @@ public class PartidoController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                 "error", "Error al obtener partidos",
+                "detalle", e.getMessage()
+            ));
+        }
+    }
+
+    /**
+     * Buscar partidos compatibles para un jugador según la estrategia de emparejamiento de cada partido
+     */
+    @GetMapping("/compatibles/{jugadorId}")
+    public ResponseEntity<?> buscarPartidosCompatiblesParaJugador(@PathVariable Long jugadorId) {
+        try {
+            List<Partido> partidos = partidoService.buscarPartidosCompatiblesParaJugador(jugadorId);
+            List<PartidoDTO> partidosDTO = partidos.stream()
+                .map(partidoService::convertirADTO)
+                .toList();
+            return ResponseEntity.ok(Map.of(
+                "partidos", partidosDTO,
+                "cantidad", partidosDTO.size()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "error", "Error al buscar partidos compatibles",
                 "detalle", e.getMessage()
             ));
         }
