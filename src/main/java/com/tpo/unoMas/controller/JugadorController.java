@@ -35,19 +35,16 @@ public class JugadorController {
     @Autowired
     private JugadorService jugadorService;
 
-    /**
-     * RF1: Registro de usuarios
-     * Un usuario debe poder registrarse al sistema
-     */
+//  Registro de Jugadores.
     @PostMapping("/registro")
     public ResponseEntity<?> registrarJugador(@Valid @RequestBody RegistroJugadorRequest request) {
         try {
             Jugador jugador = new Jugador();
             jugador.setNombre(request.getNombre());
             jugador.setEmail(request.getEmail());
-            jugador.setNivel(request.getNivel());
             jugador.setTelefono(request.getTelefono());
-            // Setear zona y otros campos si corresponde
+            jugador.setPassword(request.getPassword());
+
             Jugador jugadorGuardado = jugadorService.guardar(jugador);
             JugadorDTO jugadorDTO = jugadorGuardado.convertirADTO();
             return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
@@ -62,9 +59,7 @@ public class JugadorController {
         }
     }
 
-    /**
-     * Obtener jugador por ID
-     */
+
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerJugador(@PathVariable Long id) {
         try {
@@ -78,9 +73,7 @@ public class JugadorController {
         }
     }
 
-    /**
-     * Obtener todos los jugadores
-     */
+
     @GetMapping
     public ResponseEntity<?> obtenerTodosLosJugadores() {
         try {
@@ -100,9 +93,6 @@ public class JugadorController {
         }
     }
 
-    /**
-     * Buscar jugadores por zona
-     */
     @GetMapping("/zona/{zonaId}")
     public ResponseEntity<?> obtenerJugadoresPorZona(@PathVariable Long zonaId) {
         try {
@@ -123,9 +113,6 @@ public class JugadorController {
         }
     }
 
-    /**
-     * Buscar jugador por email
-     */
     @GetMapping("/email/{email}")
     public ResponseEntity<?> obtenerJugadorPorEmail(@PathVariable String email) {
         try {
@@ -139,9 +126,6 @@ public class JugadorController {
         }
     }
 
-    /**
-     * Actualizar perfil de jugador
-     */
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarJugador(@PathVariable Long id, 
                                              @Valid @RequestBody RegistroJugadorRequest request) {
@@ -160,10 +144,7 @@ public class JugadorController {
             ));
         }
     }
-
-    /**
-     * Agregar un deporte favorito al jugador
-     */
+    
     @Operation(summary = "Agregar deporte favorito", description = "Agrega un deporte favorito al jugador con el nivel especificado. Lanza error si ya es favorito.")
     @ApiResponse(responseCode = "200", description = "Deporte favorito agregado", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\n  'mensaje': 'Deporte favorito agregado',\n  'jugador': { ... }\n}")))
     @ApiResponse(responseCode = "400", description = "Error de validación", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\n  'error': 'No se pudo agregar deporte favorito',\n  'detalle': 'El deporte ya está marcado como favorito para este jugador'\n}")))

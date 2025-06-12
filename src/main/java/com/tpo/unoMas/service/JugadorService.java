@@ -36,67 +36,41 @@ public class JugadorService {
     @Autowired
     private DeporteJugadorRepository deporteJugadorRepository;
 
-    /**
-     * Obtener jugador por ID
-     */
     public Jugador obtenerPorId(Long id) {
         return jugadorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
     }
 
-    /**
-     * Obtener jugador por email
-     */
     public Jugador obtenerPorEmail(String email) {
         return jugadorRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
     }
 
-    /**
-     * Obtener todos los jugadores
-     */
     public List<Jugador> obtenerTodos() {
         return jugadorRepository.findAll();
     }
 
-    /**
-     * Obtener jugadores por zona
-     */
     public List<Jugador> obtenerPorZona(Long zonaId) {
         return jugadorRepository.findByZonaId(zonaId);
     }
 
-    /**
-     * Actualizar jugador
-     */
+//  Update
     public Jugador actualizarJugador(Long id, RegistroJugadorRequest request) {
         Jugador jugador = obtenerPorId(id);
-        
-        // Validar email si cambió
+
         if (!jugador.getEmail().equals(request.getEmail()) && 
             jugadorRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Ya existe un jugador con ese email");
         }
-        
-        // Obtener zona y deporte si cambiaron
+
         if (!jugador.getZona().getId().equals(request.getZonaId())) {
             Zona zona = zonaRepository.findById(request.getZonaId())
                     .orElseThrow(() -> new RuntimeException("Zona no encontrada"));
             jugador.setZona(zona);
         }
 
-        /*
-        if (!jugador.getDeporteFavorito().getId().equals(request.getDeporteFavoritoId())) {
-            Deporte deporteFavorito = deporteRepository.findById(request.getDeporteFavoritoId())
-                    .orElseThrow(() -> new RuntimeException("Deporte no encontrado"));
-            jugador.setDeporteFavorito(deporteFavorito);
-        }
-         */
-        
-        // Actualizar campos
         jugador.setNombre(request.getNombre());
         jugador.setEmail(request.getEmail());
-        jugador.setNivel(request.getNivel());
         jugador.setTelefono(request.getTelefono());
         
         return jugadorRepository.save(jugador);

@@ -40,10 +40,6 @@ public class Jugador {
     @JoinColumn(name = "zona_id", nullable = false)
     private Zona zona;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "nivel")
-    private Nivel nivel;
-
     @Column(name = "telefono", length = 20)
     private String telefono;
 
@@ -155,14 +151,6 @@ public class Jugador {
 
     public void setZona(Zona zona) {
         this.zona = zona;
-    }
-
-    public Nivel getNivel() {
-        return nivel;
-    }
-
-    public void setNivel(Nivel nivel) {
-        this.nivel = nivel;
     }
 
     public String getTelefono() {

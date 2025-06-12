@@ -19,12 +19,10 @@ public class RegistroJugadorRequest {
     
     @NotNull(message = "La zona no puede ser nula")
     private Long zonaId;
-    
-    @NotNull(message = "El deporte favorito no puede ser nulo")
-    private Long deporteFavoritoId;
-    
-    @NotNull(message = "El nivel no puede ser nulo")
-    private Nivel nivel;
+
+    @NotBlank(message = "La password no puede estar vacia")
+    @Size(min = 8, max = 21, message = "Debe tener entre 8 y 21 caracteres")
+    private String password;
     
     private String telefono;
     
@@ -41,14 +39,11 @@ public class RegistroJugadorRequest {
     public Long getZonaId() { return zonaId; }
     public void setZonaId(Long zonaId) { this.zonaId = zonaId; }
 
-    public Long getDeporteFavoritoId() { return deporteFavoritoId; }
-    public void setDeporteFavoritoId(Long deporteFavoritoId) { this.deporteFavoritoId = deporteFavoritoId; }
-
-    public Nivel getNivel() { return nivel; }
-    public void setNivel(Nivel nivel) { this.nivel = nivel; }
-
     public String getTelefono() { return telefono; }
     public void setTelefono(String telefono) { this.telefono = telefono; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
     @Override
     public String toString() {
@@ -56,8 +51,6 @@ public class RegistroJugadorRequest {
                 "nombre='" + nombre + '\'' +
                 ", email='" + email + '\'' +
                 ", zonaId=" + zonaId +
-                ", deporteFavoritoId=" + deporteFavoritoId +
-                ", nivel=" + nivel +
                 ", telefono='" + telefono + '\'' +
                 '}';
     }
