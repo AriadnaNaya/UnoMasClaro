@@ -2,11 +2,8 @@ package com.tpo.unoMas.controller;
 
 import com.tpo.unoMas.dto.PartidoDTO;
 import com.tpo.unoMas.dto.CrearPartidoRequest;
-import com.tpo.unoMas.dto.BuscarPartidosRequest;
-import com.tpo.unoMas.dto.JugadorDTO;
 import com.tpo.unoMas.model.Partido;
 import com.tpo.unoMas.model.Jugador;
-import com.tpo.unoMas.model.strategy.emparejamiento.EmparejamientoPorHistorial;
 import com.tpo.unoMas.service.PartidoService;
 import com.tpo.unoMas.service.JugadorService;
 import com.tpo.unoMas.repository.ZonaRepository;
@@ -120,17 +117,17 @@ public class PartidoController {
      * Los usuarios podrán buscar encuentros deportivos en su zona donde falten jugadores
      */
     @PostMapping("/buscar")
-    public ResponseEntity<?> buscarPartidos(@Valid @RequestBody BuscarPartidosRequest request) {
+    public ResponseEntity<?> buscarPartidos(Long jugadorID) {
         try {
-            List<Partido> partidos = partidoService.buscarPartidos(request);
+            Jugador jugador = jugadorService.obtenerPorId(jugadorID);
+            List<Partido> partidos = partidoService.buscarPartidosCompatiblesParaJugador(jugador);
             List<PartidoDTO> partidosDTO = partidos.stream()
                 .map(partidoService::convertirADTO)
                 .toList();
                 
             return ResponseEntity.ok(Map.of(
                 "partidos", partidosDTO,
-                "cantidad", partidosDTO.size(),
-                "criterio", request.toString()
+                "cantidad", partidosDTO.size()
             ));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
@@ -264,20 +261,4 @@ public class PartidoController {
         }
     }
 
-    // ELIMINADO: enviarInvitaciones manual
-    // Las invitaciones se envían automáticamente cuando se crea un partido
-    // a través del patrón Observer (InvitacionService)
-
-    // Endpoint de ejemplo para emparejamiento por historial
-    @GetMapping("/{partidoId}/emparejamiento-historial")
-    public ResponseEntity<?> emparejarPorHistorial(@PathVariable Long partidoId) {
-        Partido partido = partidoService.obtenerPorId(partidoId);
-        List<Jugador> disponibles = jugadorService.obtenerTodos();
-        EmparejamientoPorHistorial estrategia = new EmparejamientoPorHistorial();
-        List<Jugador> compatibles = partidoService.encontrarJugadoresPorHistorial(partido, disponibles, estrategia);
-        return ResponseEntity.ok(Map.of(
-            "jugadoresCompatibles", compatibles,
-            "cantidad", compatibles.size()
-        ));
-    }
 }

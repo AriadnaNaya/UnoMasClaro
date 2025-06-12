@@ -42,11 +42,6 @@ public class PartidoService {
         notificacionService.notificarConTitulo(partido, "Partido creado", "Se ha creado un partido");
         return partidoRepository.save(partido);
     }
-    
-    public List<Partido> buscarPartidos(BuscarPartidosRequest request) {
-        List<Partido> todosLosPartidos = partidoRepository.findAll();
-        return todosLosPartidos;
-    }
 
     public List<Partido> buscarPartidosCompatiblesParaJugador(Jugador jugador) {
         List<Partido> todosLosPartidos = partidoRepository.findAll();
@@ -127,26 +122,6 @@ public class PartidoService {
         return partidoRepository.findByJugadoresContaining(jugador);
     }
 
-    // ELIMINADO: enviarInvitacionesConEstrategia
-    // Las invitaciones se envían automáticamente por el patrón Observer
-    // cuando se crea un partido. No necesitamos método manual adicional.
-
-    /**
-     * Convertir Partido a DTO
-     */
-    // Eliminar la lógica de conversión de jugadores a DTO del método convertirADTO. Si el método ya no se usa, eliminarlo completamente.
-
-    public List<Jugador> encontrarJugadoresPorHistorial(Partido partido, List<Jugador> jugadoresDisponibles, EmparejamientoPorHistorial estrategia) {
-        return jugadoresDisponibles.stream()
-            .filter(jugador -> {
-                List<Partido> jugados = partidoRepository.findByJugadoresContaining(jugador);
-                List<Partido> organizados = partidoRepository.findByOrganizador(jugador);
-                Set<Partido> historial = new HashSet<>(jugados);
-                historial.addAll(organizados);
-                return estrategia.esCompatible(partido, new ArrayList<>(historial));
-            })
-            .collect(Collectors.toList());
-    }
 
     public PartidoDTO convertirADTO(Partido partido){
         PartidoDTO partidodto= partido.convertirADTO();

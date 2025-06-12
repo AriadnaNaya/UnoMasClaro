@@ -62,9 +62,4 @@ public interface JugadorRepository extends JpaRepository<Jugador, Long> {
      */
     boolean existsByEmail(String email);
     
-    /**
-     * Buscar jugadores activos (que han jugado recientemente)
-     */
-    @Query("SELECT DISTINCT j FROM Jugador j JOIN j.partidosParticipados p WHERE p.fechaHora >= :fechaLimite")
-    List<Jugador> findJugadoresActivos(@Param("fechaLimite") java.time.LocalDateTime fechaLimite);
 } 

@@ -50,6 +50,9 @@ public class Jugador {
     @OneToMany(mappedBy = "jugador", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DeporteJugador> deportes = new ArrayList<>();
 
+    @Transient
+    private List<Partido> historial = new ArrayList<>();
+
     public Jugador() {
         
     }
@@ -178,4 +181,12 @@ public class Jugador {
         this.deportes = deportes;
     }
 
+
+    public List<Partido> getHistorial() {
+        return historial;
+    }
+
+    public void setHistorial(List<Partido> historial) {
+        this.historial = historial;
+    }
 }
