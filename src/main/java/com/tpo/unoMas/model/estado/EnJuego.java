@@ -28,6 +28,12 @@ public class EnJuego extends EstadoPartido{
     @Override
     public void finalizarPartido(Partido partido) {
         Objects.requireNonNull(partido, "El partido no puede ser null");
+        
+        // Agregar partido al historial de todos los jugadores participantes
+        for (Jugador jugador : partido.getJugadores()) {
+            jugador.agregarAlHistorial(partido);
+        }
+        
         partido.cambiarEstado(new Finalizado());
     }
 

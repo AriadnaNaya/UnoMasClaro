@@ -29,12 +29,6 @@ public class PartidoService {
     private PartidoRepository partidoRepository;
     
     @Autowired
-    private ZonaRepository zonaRepository;
-    
-    @Autowired
-    private DeporteRepository deporteRepository;
-    
-    @Autowired
     private NotificacionService notificacionService;
 
     public Partido guardarPartido(Partido partido, List<Jugador> disponibles) {
@@ -98,6 +92,10 @@ public class PartidoService {
             // El estado interno validará si es posible cancelar
             partido.cancelar();
             partidoRepository.save(partido);
+            for (Jugador jugador : partido.getJugadores()) {
+                jugador.eliminarDeHistorial(partido);
+            }
+
         } catch (Exception e) {
             throw new RuntimeException("No se puede cancelar el partido: " + e.getMessage());
         }
@@ -112,6 +110,7 @@ public class PartidoService {
             throw new RuntimeException("El jugador no está en este partido");
         }
         partido.confirmarAsistencia(jugador);
+        jugador.agregarAlHistorial(partido);
         partidoRepository.save(partido);
     }
 
@@ -121,7 +120,6 @@ public class PartidoService {
     public List<Partido> obtenerPartidosPorJugador(Jugador jugador) {
         return partidoRepository.findByJugadoresContaining(jugador);
     }
-
 
     public PartidoDTO convertirADTO(Partido partido){
         PartidoDTO partidodto= partido.convertirADTO();

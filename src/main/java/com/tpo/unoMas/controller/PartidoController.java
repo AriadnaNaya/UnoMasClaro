@@ -98,6 +98,7 @@ public class PartidoController {
             partido.cambiarEstado(new com.tpo.unoMas.model.estado.NecesitamosJugadores());
             partido.agregarJugador(organizador);
             Partido partidoGuardado = partidoService.guardarPartido(partido, disponibles);
+            organizador.agregarAlHistorial(partidoGuardado);
             PartidoDTO partidoDTO = partidoGuardado.convertirADTO();
             return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                 "mensaje", "Partido creado exitosamente",
@@ -136,31 +137,6 @@ public class PartidoController {
             ));
         }
     }
-
-    /**
-     * Obtener partidos por jugador
-     */
-    @GetMapping("/buscar/{jugadorId}")
-    public ResponseEntity<?> obtenerPartidosPorJugador(@PathVariable Long jugadorId) {
-        try {
-            Jugador jugador = jugadorService.obtenerPorId(jugadorId);
-            List<Partido> partidos = partidoService.obtenerPartidosPorJugador(jugador);
-            List<PartidoDTO> partidosDTO = partidos.stream()
-                    .map(partidoService::convertirADTO)
-                    .toList();
-
-            return ResponseEntity.ok(Map.of(
-                    "partidos", partidosDTO,
-                    "cantidad", partidosDTO.size()
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of(
-                    "error", "Error al obtener partidos",
-                    "detalle", e.getMessage()
-            ));
-        }
-    }
-
 
     /**
      * Obtener partido por ID
@@ -237,28 +213,5 @@ public class PartidoController {
         ));
     }
 
-
-    /**
-     * Buscar partidos compatibles para un jugador según la estrategia de emparejamiento de cada partido
-     */
-    @GetMapping("/compatibles/{jugadorId}")
-    public ResponseEntity<?> buscarPartidosCompatiblesParaJugador(@PathVariable Long jugadorId) {
-        try {
-            Jugador jugador = jugadorService.obtenerPorId(jugadorId);
-            List<Partido> partidos = partidoService.buscarPartidosCompatiblesParaJugador(jugador);
-            List<PartidoDTO> partidosDTO = partidos.stream()
-                .map(partidoService::convertirADTO)
-                .toList();
-            return ResponseEntity.ok(Map.of(
-                "partidos", partidosDTO,
-                "cantidad", partidosDTO.size()
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of(
-                "error", "Error al buscar partidos compatibles",
-                "detalle", e.getMessage()
-            ));
-        }
-    }
 
 }

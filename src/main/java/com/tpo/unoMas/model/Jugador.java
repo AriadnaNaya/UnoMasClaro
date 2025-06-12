@@ -177,16 +177,15 @@ public class Jugador {
         return deportes;
     }
 
-    public void setDeportes(List<DeporteJugador> deportes) {
-        this.deportes = deportes;
-    }
-
-
     public List<Partido> getHistorial() {
         return historial;
     }
 
-    public void setHistorial(List<Partido> historial) {
-        this.historial = historial;
+    public void agregarAlHistorial(Partido partido) {
+        this.historial.add(partido);
+    }
+
+    public void eliminarDeHistorial(Partido partido) {
+        this.historial.remove(partido);
     }
 }

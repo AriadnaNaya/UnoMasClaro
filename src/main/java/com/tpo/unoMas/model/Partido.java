@@ -280,6 +280,10 @@ public class Partido implements Observable {
 
     public void setOrganizador(Jugador organizador) {
         this.organizador = organizador;
+        // Agregar partido al historial del organizador cuando se asigna
+        if (organizador != null) {
+            organizador.agregarAlHistorial(this);
+        }
     }
 
     public Integer getDuracionMinutos() {

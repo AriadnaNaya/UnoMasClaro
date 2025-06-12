@@ -61,5 +61,5 @@ public interface JugadorRepository extends JpaRepository<Jugador, Long> {
      * Verificar si existe jugador con email
      */
     boolean existsByEmail(String email);
-    
+
 } 
