@@ -13,6 +13,11 @@ public class Ubicacion {
     // Constructor vacío requerido por JPA
     public Ubicacion() {}
 
+    public Ubicacion(Double latitud, Double longitud) {
+        this.latitud = latitud;
+        this.longitud = longitud;
+    }
+
     public Double getLatitud() {
         return latitud;
     }

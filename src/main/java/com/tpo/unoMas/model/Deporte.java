@@ -59,6 +59,10 @@ public class Deporte {
 
     public int getCantidadJugadores() {return cantidadJugadores;}
 
+    public void setCantidadJugadores(int cantidadJugadores) {
+        this.cantidadJugadores = cantidadJugadores;
+    }
+
     public DeporteDTO convertirADTO() {
         DeporteDTO dto = new DeporteDTO();
         dto.setId(this.id);
