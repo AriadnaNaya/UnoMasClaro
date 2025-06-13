@@ -99,6 +99,19 @@ public class Partido implements Observable {
     }
 
 
+
+    public List<Jugador> matchearJugadores(List<Jugador> jugadores) {
+        return this.estrategiaEmparejamiento.encontrarJugadoresPotenciales(this, jugadores);
+    }
+
+
+    // Emparejamiento - Partido
+    public void cambiarEstrategiaEmparejamiento(EstrategiaEmparejamiento estrategiaEmparejamiento) {
+        this.estrategiaEmparejamiento = estrategiaEmparejamiento;
+    }
+
+//-------------------------  State Partido --------------------------------------------------------
+
     // Service Partido
     // Hay un agregar jugador y un confirmar jugador porque la invitacion se envia a x cant de jugadores.
     // Todos los que cumplan con la estrategia de emparejamiento se invitan.
@@ -121,27 +134,14 @@ public class Partido implements Observable {
         }
     }
 
-    public List<Jugador> invitarJugadores(List<Jugador> jugadores) {
-        return this.estrategiaEmparejamiento.encontrarJugadoresPotenciales(this, jugadores);
-    }
-
-
-    // Emparejamiento - Partido
-    public void cambiarEstrategiaEmparejamiento(EstrategiaEmparejamiento estrategiaEmparejamiento) {
-        this.estrategiaEmparejamiento = estrategiaEmparejamiento;
-    }
-    
-    //State Partido
-
     public void confirmarAsistencia(Jugador jugador) {
         if (!jugadores.contains(jugador))
             throw new IllegalArgumentException("El jugador no está en la lista");
 
         jugadoresConfirmados.add(jugador);
 
-        if (jugadoresConfirmados.size() == jugadores.size()) {
-            estado.confirmarPartido(this);
-        }
+        estado.confirmarPartido(this);
+
     }
 
     public void iniciar() {
@@ -162,6 +162,15 @@ public class Partido implements Observable {
         }
     }
 
+    public void cambiarEstado(EstadoPartido nuevoEstado) {
+        Objects.requireNonNull(nuevoEstado, "El nuevo estado no puede ser null");
+        this.estado = nuevoEstado;
+
+        //Cada vez que se hace un cambio de estado se notifica a los observadores
+        notifyObservers();
+
+    }
+
     public boolean agregarJugadorInterno(Jugador jugador) {
         boolean agregado = jugadores.add(jugador);
         return agregado;
@@ -172,41 +181,34 @@ public class Partido implements Observable {
         return removido;
     }
 
-    public void cambiarEstado(EstadoPartido nuevoEstado) {
-        Objects.requireNonNull(nuevoEstado, "El nuevo estado no puede ser null");
-        this.estado = nuevoEstado;
+//-------------------------  Observer - Partido --------------------------------------------------------
 
-        notifyObservers();
-
+    @Override
+    public void attach(Observer observer) {
+        if (observers == null) {
+            observers = new ArrayList<>();
+        }
+        observers.add(observer);
     }
 
-        //    Observer - Partido
-        @Override
-        public void attach(Observer observer) {
-            if (observers == null) {
-                observers = new ArrayList<>();
-            }
-            observers.add(observer);
+    @Override
+    public void detach(Observer observer) {
+        if (observers != null) {
+            observers.remove(observer);
         }
-    
-        @Override
-        public void detach(Observer observer) {
-            if (observers != null) {
-                observers.remove(observer);
-            }
-        }
-    
-        @Override
-        public void notifyObservers() {
-            if (observers != null) {
-                for (Observer observer : observers) {
-                    observer.update(this);
-                }
-            }
-        }
-    
+    }
 
-    // Metodos Utiles - Partido
+    @Override
+    public void notifyObservers() {
+        if (observers != null) {
+            for (Observer observer : observers) {
+                observer.update(this);
+            }
+        }
+    }
+
+//-------------------------  Metodos Utiles - Partido --------------------------------------------------------
+
     public boolean estaCompleto() {
         return jugadores.size() == deporte.getCantidadJugadores();
     }
@@ -214,8 +216,7 @@ public class Partido implements Observable {
     public boolean estaEnElFuturo() {
         return fechaHora.isAfter(LocalDateTime.now());
     }
-
-    //Getter and Setter - Partido
+//-------------------------  Getter and Setter - Partido --------------------------------------------------------
 
     public Long getId() {
         return id;
@@ -279,7 +280,7 @@ public class Partido implements Observable {
 
     public void setOrganizador(Jugador organizador) {
         this.organizador = organizador;
-        // Agregar partido al historial del organizador cuando se asigna
+
         if (organizador != null) {
             organizador.agregarAlHistorial(this);
         }

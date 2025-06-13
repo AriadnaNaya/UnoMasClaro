@@ -32,19 +32,29 @@ public class PartidoService {
     private NotificacionService notificacionService;
 
     public Partido guardarPartido(Partido partido, List<Jugador> disponibles) {
-        partido.invitarJugadores(disponibles);
-        notificacionService.notificarConTitulo(partido, "Partido creado", "Se ha creado un partido");
+
+        //Usa la Strategy del partido para buscar jugadores que coincidan con la estrategia del partido.
+        List<Jugador> jugadores = partido.matchearJugadores(disponibles);
+
+        //Envia las notificaciones a todos los jugadores d eque se creeo un partido, invitandolos a sumarse
+        notificacionService.notificarConTitulo(jugadores, "Partido creado", "Se ha creado un partido que te podria interesar");
+
         return partidoRepository.save(partido);
     }
 
     public List<Partido> buscarPartidosCompatiblesParaJugador(Jugador jugador) {
+
+        //Busca los partidos en estado aceptable
         List<Partido> todosLosPartidos = partidoRepository.findPartidosActivos();
+
+        //Para cada partido, se fija su estrategia y compara al jugador y al partido para ver si son compatibles
         return todosLosPartidos.stream()
             .filter(partido -> {
                 EstrategiaEmparejamiento estrategia = partido.getEstrategiaEmparejamiento();
                 if (estrategia == null) {
                     estrategia = new EmparejamientoPorCercania();
                 }
+                //Depende de cada estrategia que considera como compatible
                 return estrategia.esCompatible(partido, jugador);
             })
             .collect(Collectors.toList());
@@ -58,28 +68,21 @@ public class PartidoService {
                 .orElseThrow(() -> new RuntimeException("Partido no encontrado"));
     }
 
-    /**
-     * Unirse a un partido
-     */
+//-------------------------  State --------------------------------------------------------
+
+    //Utiliza el estado del partido para ver si un jugador puede unirse o no
     public void unirseAPartido(Long partidoId, Jugador jugador) {
         Partido partido = obtenerPorId(partidoId);
         partido.agregarJugador(jugador);
         partidoRepository.save(partido);
     }
 
-    /**
-     * Salirse de un partido
-     */
     public void salirseDePartido(Long partidoId, Jugador jugador) {
         Partido partido = obtenerPorId(partidoId);
         partido.removerJugador(jugador);
         partidoRepository.save(partido);
     }
 
-    /**
-     * Cancelar partido - Única acción manual permitida para el organizador
-     * Los demás cambios de estado son automáticos por el patrón State
-     */
     public void cancelarPartido(Long partidoId, Long organizadorId) {
         Partido partido = obtenerPorId(partidoId);
         
@@ -97,9 +100,7 @@ public class PartidoService {
         }
     }
 
-    /**
-     * Confirmar participación en partido
-     */
+    //Cada jugador puede confirmar su asistencia.
     public void confirmarParticipacion(Long partidoId, Jugador jugador) {
         Partido partido = obtenerPorId(partidoId);
         if (!partido.getJugadores().contains(jugador)) {
@@ -109,6 +110,7 @@ public class PartidoService {
         partidoRepository.save(partido);
     }
 
+//-------------------------  DTO --------------------------------------------------------
     public PartidoDTO convertirADTO(Partido partido){
         PartidoDTO partidodto= partido.convertirADTO();
         return partidodto;

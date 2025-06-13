@@ -1,10 +1,13 @@
 package com.tpo.unoMas.service;
 
+import com.tpo.unoMas.model.Jugador;
 import com.tpo.unoMas.model.Notificacion;
 import com.tpo.unoMas.model.Partido;
 import com.tpo.unoMas.model.observer.Observer;
 import com.tpo.unoMas.model.strategy.notificacion.INotificacionStrategy;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class NotificacionService implements Observer {
@@ -16,18 +19,19 @@ public class NotificacionService implements Observer {
         this.estrategiaNotificacion = nuevaEstrategia;
     }
 
+    //Avisa sobre cambio de estado
     @Override
     public void update(Partido partido) {
         String titulo = String.format("Partido %s: Cambio a %s",
                 partido.getTitulo(), partido.getEstado().getClass().getSimpleName());
 
-        notificarConTitulo(partido, titulo, partido.getEstado().armarMensaje());
+        notificarConTitulo(partido.getJugadores(), titulo, partido.getEstado().armarMensaje());
     }
 
-    public void notificarConTitulo(Partido partido, String titulo, String mensaje) {
-        partido.getJugadores().forEach(jugador -> {
+    //Le envia a cada jugador una notificacion segun la estrategia definida
+    public void notificarConTitulo(List<Jugador> jugadores, String titulo, String mensaje) {
+        jugadores.forEach(jugador -> {
             Notificacion notificacion = new Notificacion(titulo, mensaje, jugador);
-
             enviarConEstrategia(notificacion);
         });
     }
@@ -35,15 +39,8 @@ public class NotificacionService implements Observer {
         try {
             estrategiaNotificacion.enviarNotificacion(notificacion);
         } catch (Exception e) {
-            // Log el error pero no falla todo el proceso
             System.err.println("Error enviando notificación: " + e.getMessage());
         }
     }
 
-    /**
-     * Método solo para testing/demo - obtener nombre de la estrategia actual
-     */
-    public String getEstrategiaActual() {
-        return estrategiaNotificacion.getClass().getSimpleName();
-    }
 }

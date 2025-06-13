@@ -4,6 +4,7 @@ import com.tpo.unoMas.dto.PartidoDTO;
 import com.tpo.unoMas.dto.CrearPartidoRequest;
 import com.tpo.unoMas.model.Partido;
 import com.tpo.unoMas.model.Jugador;
+import com.tpo.unoMas.model.estado.NecesitamosJugadores;
 import com.tpo.unoMas.service.PartidoService;
 import com.tpo.unoMas.service.JugadorService;
 import com.tpo.unoMas.repository.ZonaRepository;
@@ -49,31 +50,14 @@ public class PartidoController {
     private DeporteRepository deporteRepository;
     
 
-    /**
-     * RF3: Crear un partido
-     * El encuentro recién creado pasará a estar en el estado inicial: "Necesitamos jugadores"
-     */
     @PostMapping
     @Operation(
-        summary = "🎯 Crear nuevo partido deportivo",
-        description = """
-            **Crea un nuevo partido deportivo** y activa automáticamente todos los patrones de diseño:
-            
-            - 🎯 **State Pattern**: Inicia en estado `NecesitamosJugadores`
-            - 👀 **Observer Pattern**: Dispara notificaciones automáticas
-            - 🔧 **Strategy Pattern**: Ejecuta algoritmo de emparejamiento
-            - 🔌 **Adapter Pattern**: Envía invitaciones por múltiples canales
-            
-            **Flujo automático tras creación:**
-            1. Se agrega el organizador automáticamente
-            2. Se envían invitaciones usando estrategia por defecto
-            3. Se notifica a observadores suscritos
-            """
+        summary = "🎯 Crear nuevo partido deportivo"
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "✅ Partido creado exitosamente"),
-        @ApiResponse(responseCode = "400", description = "❌ Error en los datos de entrada"),
-        @ApiResponse(responseCode = "404", description = "❌ Organizador, zona o deporte no encontrado")
+        @ApiResponse(responseCode = "201", description = "Partido creado exitosamente"),
+        @ApiResponse(responseCode = "400", description = "Error en los datos de entrada"),
+        @ApiResponse(responseCode = "404", description = "Organizador, zona o deporte no encontrado")
     })
     public ResponseEntity<?> crearPartido(@Valid @RequestBody CrearPartidoRequest request) {
         try {
@@ -93,13 +77,21 @@ public class PartidoController {
             partido.setZona(zona);
             partido.setDeporte(deporte);
             partido.setNivel(request.getNivel());
+
+            //Ademas agrega el partido al historial del organizador
             partido.setOrganizador(organizador);
             partido.setDuracionMinutos(request.getDuracionMinutos());
-            partido.cambiarEstado(new com.tpo.unoMas.model.estado.NecesitamosJugadores());
+            partido.cambiarEstado(new NecesitamosJugadores());
+
             partido.agregarJugador(organizador);
+
+            //En partido service, este metodo usa la estrategia para enviar notificaciones a los jugadores que matchen
+            //Envia notificacion usando el partron observer
+            //Guarda entidad en repository
             Partido partidoGuardado = partidoService.guardarPartido(partido, disponibles);
-            organizador.agregarAlHistorial(partidoGuardado);
+
             PartidoDTO partidoDTO = partidoGuardado.convertirADTO();
+
             return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                 "mensaje", "Partido creado exitosamente",
                 "partido", partidoDTO,
@@ -113,11 +105,16 @@ public class PartidoController {
         }
     }
 
+    //Muestra partidos para un jugador
+    //La forma en la que busca es a traves de la strategia de emparejamiento de cada partido, de todos los partidos disponibles
     @PostMapping("/buscar")
     public ResponseEntity<?> buscarPartidos(Long jugadorID) {
         try {
             Jugador jugador = jugadorService.obtenerPorId(jugadorID);
+
+            //Por cada partido, se fija si el jugador es compatible con su estrategia. Devuelve los compatibles
             List<Partido> partidos = partidoService.buscarPartidosCompatiblesParaJugador(jugador);
+
             List<PartidoDTO> partidosDTO = partidos.stream()
                 .map(partidoService::convertirADTO)
                 .toList();
@@ -152,6 +149,9 @@ public class PartidoController {
     }
 
 
+    //Cuando se crea un partido los jugadores compatibles reciben una invitacion
+    //Esa invitacion deberia tener un boton que los derive a este endpoint.
+    //Se usa el patron state para ver si el Jugador puede unirse al partido o no
     @PostMapping("/{id}/unirse")
     public ResponseEntity<?> unirseAPartido(@PathVariable Long id, @RequestParam Long jugadorId) {
         Jugador jugador = jugadorService.obtenerPorId(jugadorId);
@@ -161,6 +161,8 @@ public class PartidoController {
         ));
     }
 
+    //Un jugador puede irse de un partido
+    //Se usa el patron state para ver si el Jugador puede irse del partido o no
     @PostMapping("/{id}/salirse")
     public ResponseEntity<?> salirseDePartido(@PathVariable Long id, @RequestParam Long jugadorId) {
         Jugador jugador = jugadorService.obtenerPorId(jugadorId);
@@ -170,7 +172,8 @@ public class PartidoController {
         ));
     }
 
-
+    //Un organizador puede cancelar el partido
+    //Se usa el patron state
     @PostMapping("/{id}/cancelar")
     public ResponseEntity<?> cancelarPartido(@PathVariable Long id, 
                                             @RequestParam Long organizadorId) {

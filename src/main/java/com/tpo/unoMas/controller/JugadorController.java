@@ -31,7 +31,6 @@ public class JugadorController {
     @Autowired
     private JugadorService jugadorService;
 
-//  Registro de Jugadores.
     @PostMapping("/registro")
     public ResponseEntity<?> registrarJugador(@Valid @RequestBody RegistroJugadorRequest request) {
         try {
@@ -167,8 +166,6 @@ public class JugadorController {
     }
 
 
-
-    //  Eliminar Deporte de jugador
     @Operation(summary = "Eliminar deporte", description = "Elimina un deporte favorito del jugador (lo marca como no favorito, no borra la relación).")
     @ApiResponse(responseCode = "200", description = "Deporte favorito eliminado", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\n  'mensaje': 'Deporte favorito eliminado',\n  'jugador': { ... }\n}")))
     @ApiResponse(responseCode = "400", description = "Error de validación", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\n  'error': 'No se pudo eliminar deporte favorito',\n  'detalle': '...'\n}")))
@@ -188,8 +185,6 @@ public class JugadorController {
         }
     }
 
-
-//  Actualizar el nivel de un deporte  del jugador
     @Operation(summary = "Actualizar nivel de deporte favorito", description = "Actualiza el nivel de un deporte favorito del jugador. Lanza error si el deporte no está asociado.")
     @ApiResponse(responseCode = "200", description = "Nivel de deporte actualizado", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\n  'mensaje': 'Nivel de deporte actualizado',\n  'jugador': { ... }\n}")))
     @ApiResponse(responseCode = "400", description = "Error de validación", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\n  'error': 'No se pudo actualizar el nivel del deporte',\n  'detalle': '...'\n}")))
@@ -213,9 +208,6 @@ public class JugadorController {
         }
     }
 
-    /**
-     * Modificar el estado de favorito de un deporte
-     */
     @Operation(summary = "Modificar estado de favorito", description = "Modifica si un deporte es favorito o no para el jugador.")
     @ApiResponse(responseCode = "200", description = "Estado de favorito modificado", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\n  'mensaje': 'Estado de favorito modificado',\n  'jugador': { ... }\n}")))
     @ApiResponse(responseCode = "400", description = "Error de validación", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\n  'error': 'No se pudo modificar el estado de favorito',\n  'detalle': 'El jugador no tiene este deporte asociado'\n}")))
