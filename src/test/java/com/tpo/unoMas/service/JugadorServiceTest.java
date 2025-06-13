@@ -161,7 +161,7 @@ class JugadorServiceTest {
         // Arrange
         Jugador jugador2 = new Jugador("María García", "maria@email.com", "password123", zonaTest);
         List<Jugador> jugadores = Arrays.asList(jugadorTest, jugador2);
-        when(jugadorRepository.findByZona(zonaTest)).thenReturn(jugadores);
+        when(jugadorRepository.findByZonaId(zonaTest.getId())).thenReturn(jugadores);
 
         // Act
         List<Jugador> result = jugadorService.obtenerPorZona(zonaTest.getId());
@@ -172,7 +172,7 @@ class JugadorServiceTest {
         assertTrue(result.contains(jugadorTest));
         assertTrue(result.contains(jugador2));
         
-        verify(jugadorRepository).findByZona(zonaTest);
+        verify(jugadorRepository).findByZonaId(zonaTest.getId());
     }
 
     @Test

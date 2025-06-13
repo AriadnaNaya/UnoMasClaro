@@ -40,11 +40,8 @@ public class PartidoArmado extends EstadoPartido {
 
     @Override
     public void confirmarPartido(Partido partido) {
-        //Si todos los jugadores confirmaron, pasamos al estado Confirmado
-        if (partido.getJugadoresConfirmados().size() == partido.getJugadores().size()) {
             partido.cambiarEstado(new Confirmado());
             partido.setEstadoDB("Confirmado");
-        }
     }
 
     @Override

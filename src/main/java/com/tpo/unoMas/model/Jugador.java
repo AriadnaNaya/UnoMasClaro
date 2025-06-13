@@ -46,7 +46,12 @@ public class Jugador {
     @OneToMany(mappedBy = "jugador", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DeporteJugador> deportes = new ArrayList<>();
 
-    @Transient
+    @ManyToMany
+    @JoinTable(
+        name = "jugador_historial",
+        joinColumns = @JoinColumn(name = "jugador_id"),
+        inverseJoinColumns = @JoinColumn(name = "partido_id")
+    )
     private List<Partido> historial = new ArrayList<>();
 
     public Jugador() {

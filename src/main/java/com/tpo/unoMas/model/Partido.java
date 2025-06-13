@@ -173,7 +173,9 @@ public class Partido implements Observable {
 
         jugadoresConfirmados.add(jugador);
 
-        estado.confirmarPartido(this);
+        if (jugadoresConfirmados.size() == jugadores.size()) {
+            jugadoresConfirmados.add(jugador);
+        }
 
     }
 
@@ -196,11 +198,11 @@ public class Partido implements Observable {
     }
 
     public void cambiarEstado(EstadoPartido nuevoEstado) {
-        Objects.requireNonNull(nuevoEstado, "El nuevo estado no puede ser null");
+        if (nuevoEstado == null) {
+            throw new IllegalStateException("El nuevo estado no puede ser null");
+        }
         this.estado = nuevoEstado;
         this.estadoDB = nuevoEstado.getClass().getSimpleName();
-
-        //Cada vez que se hace un cambio de estado se notifica a los observadores
         notifyObservers();
     }
 
@@ -357,16 +359,24 @@ public class Partido implements Observable {
 
     @Override
     public String toString() {
-        return "Partido{" +
-                "id=" + id +
-                ", titulo='" + titulo + '\'' +
-                ", fechaHora=" + fechaHora +
-                ", zona=" + zona +
-                ", deporte=" + deporte +
-                ", nivel=" + nivel +
-                ", jugadores=" + jugadores +
-                ", estado=" + estado +
-                '}';
+        StringBuilder sb = new StringBuilder();
+        sb.append("Partido{");
+        sb.append("id=").append(id);
+        sb.append(", titulo='").append(titulo).append('\'');
+        sb.append(", fechaHora=").append(fechaHora);
+        if (zona != null) {
+            sb.append(", zona=").append(zona.getBarrio());
+        }
+        if (deporte != null) {
+            sb.append(", deporte=").append(deporte.getNombre());
+        }
+        if (estado != null) {
+            sb.append(", estado=").append(estado.getClass().getSimpleName());
+        }
+        sb.append(", jugadores=").append(jugadores.size());
+        sb.append(", jugadoresConfirmados=").append(jugadoresConfirmados.size());
+        sb.append('}');
+        return sb.toString();
     }
 
     public PartidoDTO convertirADTO() {
