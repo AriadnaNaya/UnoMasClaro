@@ -36,7 +36,14 @@ public class JugadorService {
     @Autowired
     private DeporteJugadorRepository deporteJugadorRepository;
 
-//  Update
+//-------------------------  Crud --------------------------------------------------------
+    public Jugador guardar(Jugador jugador) {
+        if (jugadorRepository.existsByEmail(jugador.getEmail())) {
+            throw new RuntimeException("Ya existe un jugador con ese email");
+        }
+        return jugadorRepository.save(jugador);
+    }
+
     public Jugador actualizarJugador(Long id, RegistroJugadorRequest request) {
         Jugador jugador = obtenerPorId(id);
 
@@ -57,6 +64,7 @@ public class JugadorService {
         
         return jugadorRepository.save(jugador);
     }
+//------------------------- En flujo envio notificaciones -------------------------------------------------
 
     public List<Jugador> obtenerDisponiblesParaPartido(LocalDateTime fechaHora, int duracionMinutos, Long organizadorId) {
         List<Jugador> jugadores = jugadorRepository.findAll().stream()
@@ -78,12 +86,6 @@ public class JugadorService {
         return !fecha1.isAfter(fin2) && !fecha2.isAfter(fin1);
     }
 
-    public Jugador guardar(Jugador jugador) {
-        if (jugadorRepository.existsByEmail(jugador.getEmail())) {
-            throw new RuntimeException("Ya existe un jugador con ese email");
-        }
-        return jugadorRepository.save(jugador);
-    }
 //-------------------------  Manejo Deportes -------------------------------------------------
 
     public Jugador agregarDeporte(Long jugadorId, Long deporteId, Nivel nivel) {
