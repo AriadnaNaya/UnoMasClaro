@@ -58,6 +58,13 @@ public class SwaggerConfig {
                                 - GET `/api/configuracion/deportes` (deportes disponibles)
                                 - GET `/api/configuracion/niveles` (niveles disponibles)
 
+                                ## 🗄️ Base de Datos
+                                - H2 en memoria para desarrollo
+                                - Consola H2: `http://localhost:8080/h2-console`
+                                - JDBC URL: `jdbc:h2:mem:testdb`
+                                - Usuario: `sa`
+                                - Contraseña: (vacía)
+
                                 ## 📝 Ejemplo de uso
                                 ```json
                                 {
@@ -75,7 +82,7 @@ public class SwaggerConfig {
                                 - Autenticación desactivada para testing/demo.
                                 - Para activar JWT, modificar SecurityConfig.java.
                                 """)
-                        .version("1.1.0")
+                        .version("1.2.0")
                         .contact(new Contact()
                                 .name("Equipo UnoMas")
                                 .email("soporte@unomas.com")

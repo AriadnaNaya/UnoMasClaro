@@ -1,9 +1,9 @@
 # 🎾 UnoMas - Sistema de Gestión de Partidos Deportivos
 
-![Java](https://img.shields.io/badge/Java-17-orange)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.0-green)
+![Java](https://img.shields.io/badge/Java-21-orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.3-green)
 ![Maven](https://img.shields.io/badge/Maven-4.0-blue)
-![MySQL](https://img.shields.io/badge/MySQL-8.0-blue)
+![H2](https://img.shields.io/badge/H2-2.2.224-blue)
 
 ---
 
@@ -56,7 +56,7 @@ graph LR
 
 La documentación interactiva está disponible en:
 ```
-http://localhost:8080/swagger-ui.html
+http://localhost:8080/swagger-ui/index.html
 ```
 
 ### Endpoints principales
@@ -137,6 +137,25 @@ http://localhost:8080/swagger-ui.html
 
 - **Autenticación JWT desactivada** por defecto. Todos los endpoints son públicos para testing y demo.
 - Para activar autenticación, modificar `SecurityConfig.java`.
+
+---
+
+## 🗄️ Base de Datos
+
+### Configuración
+- Base de datos H2 en memoria para desarrollo
+- Consola H2 disponible en: `http://localhost:8080/h2-console`
+- Configuración de conexión:
+  - JDBC URL: `jdbc:h2:mem:testdb`
+  - Usuario: `sa`
+  - Contraseña: (vacía)
+
+### Entidades Principales
+- `Jugador`: Usuarios del sistema
+- `Partido`: Partidos deportivos
+- `Deporte`: Deportes disponibles
+- `Zona`: Ubicaciones de partidos
+- `Notificacion`: Sistema de notificaciones
 
 ---
 
