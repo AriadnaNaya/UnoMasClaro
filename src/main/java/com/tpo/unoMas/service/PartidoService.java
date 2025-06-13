@@ -13,13 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.ArrayList;
+
 
 import com.tpo.unoMas.model.strategy.emparejamiento.EmparejamientoPorCercania;
 import com.tpo.unoMas.model.strategy.emparejamiento.EstrategiaEmparejamiento;
-import com.tpo.unoMas.model.strategy.emparejamiento.EmparejamientoPorHistorial;
+
 
 @Service
 @Transactional
@@ -35,6 +33,9 @@ public class PartidoService {
 
         //Usa la Strategy del partido para buscar jugadores que coincidan con la estrategia del partido.
         List<Jugador> jugadores = partido.matchearJugadores(disponibles);
+
+        //Registra el servicio de notificaciones como observador del partido
+        partido.attach(notificacionService);
 
         //Envia las notificaciones a todos los jugadores d eque se creeo un partido, invitandolos a sumarse
         notificacionService.notificarConTitulo(jugadores, "Partido creado", "Se ha creado un partido que te podria interesar");

@@ -5,6 +5,9 @@ import com.tpo.unoMas.model.Notificacion;
 import com.tpo.unoMas.model.Partido;
 import com.tpo.unoMas.model.observer.Observer;
 import com.tpo.unoMas.model.strategy.notificacion.INotificacionStrategy;
+import com.tpo.unoMas.model.strategy.notificacion.NotificacionEmail;
+import com.tpo.unoMas.model.adapter.NotificacionEmailAdapter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +17,11 @@ public class NotificacionService implements Observer {
 
     private INotificacionStrategy estrategiaNotificacion;
 
+    @Autowired
+    public NotificacionService(NotificacionEmailAdapter emailAdapter) {
+        // Estrategia por defecto: notificaciones por email
+        this.estrategiaNotificacion = new NotificacionEmail(emailAdapter);
+    }
 
     public void cambiarEstrategiaNotificacion(INotificacionStrategy nuevaEstrategia) {
         this.estrategiaNotificacion = nuevaEstrategia;
