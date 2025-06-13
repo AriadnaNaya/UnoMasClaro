@@ -11,7 +11,4 @@ import java.util.Optional;
 public interface ZonaRepository extends JpaRepository<Zona, Long> {
     
 
-    Optional<Zona> findByNombre(String nombre);
-    
-    boolean existsByNombre(String nombre);
 } 

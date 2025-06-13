@@ -19,7 +19,7 @@ public class Confirmado extends EstadoPartido{
 
         if (partido.getJugadores().size() < partido.getDeporte().getCantidadJugadores()) {
             partido.cambiarEstado(new NecesitamosJugadores());
-            partido.setEstadoDB("Confirmado");
+            partido.setEstadoDB("NecesitamosJugadores");
         }
     }
 
@@ -30,9 +30,7 @@ public class Confirmado extends EstadoPartido{
 
     @Override
     public void iniciarPartido(Partido partido) {
-
         partido.cambiarEstado(new EnJuego());
-        partido.setEstadoDB("EnJuego");
     }
 
     @Override
@@ -43,7 +41,6 @@ public class Confirmado extends EstadoPartido{
     @Override
     public void cancelarPartido(Partido partido) {
         partido.cambiarEstado(new Cancelado());
-        partido.setEstadoDB("Cancelado");
     }
 
     @Override

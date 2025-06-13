@@ -11,15 +11,12 @@ public class Zona {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /** Nombre del barrio (e.g. "Palermo"). */
     @Column(nullable = false, length = 120)
     private String barrio;
 
-    /** Nombre del partido (e.g. "CABA" o "La Matanza"). */
     @Column(nullable = false, length = 120)
     private String partido;
 
-    /** Coordenadas geográficas. */
     @Embedded
     private Ubicacion ubicacion;
 
@@ -61,9 +58,6 @@ public class Zona {
         this.ubicacion = ubicacion;
     }
 
-    /**
-     * Método helper para obtener el nombre completo de la zona
-     */
     public String getNombre() {
         return barrio + ", " + partido;
     }

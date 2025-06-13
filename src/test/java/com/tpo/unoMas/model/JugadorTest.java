@@ -244,47 +244,50 @@ class JugadorTest {
         @Test
         @DisplayName("Debería inicializar historial vacío")
         void deberiaInicializarHistorialVacio() {
-            assertTrue(jugadorTest.getHistorial().isEmpty());
+            Jugador jugadorNuevo = new Jugador("Nuevo", "nuevo@email.com", "password123", zonaTest);
+            assertTrue(jugadorNuevo.getHistorial().isEmpty());
         }
 
         @Test
         @DisplayName("Debería agregar partido al historial")
         void deberiaAgregarPartidoAlHistorial() {
-            jugadorTest.agregarAlHistorial(partidoTest);
+            Jugador jugadorNuevo = new Jugador("Nuevo", "nuevo@email.com", "password123", zonaTest);
+            jugadorNuevo.agregarAlHistorial(partidoTest);
             
-            assertEquals(1, jugadorTest.getHistorial().size());
-            assertTrue(jugadorTest.getHistorial().contains(partidoTest));
+            assertEquals(1, jugadorNuevo.getHistorial().size());
+            assertTrue(jugadorNuevo.getHistorial().contains(partidoTest));
         }
 
         @Test
         @DisplayName("Debería eliminar partido del historial")
         void deberiaEliminarPartidoDelHistorial() {
-            jugadorTest.agregarAlHistorial(partidoTest);
-            assertEquals(1, jugadorTest.getHistorial().size());
+            Jugador jugadorNuevo = new Jugador("Nuevo", "nuevo@email.com", "password123", zonaTest);
+            jugadorNuevo.agregarAlHistorial(partidoTest);
+            assertEquals(1, jugadorNuevo.getHistorial().size());
             
-            jugadorTest.eliminarDeHistorial(partidoTest);
+            jugadorNuevo.eliminarDeHistorial(partidoTest);
             
-            assertEquals(0, jugadorTest.getHistorial().size());
-            assertFalse(jugadorTest.getHistorial().contains(partidoTest));
+            assertEquals(0, jugadorNuevo.getHistorial().size());
+            assertFalse(jugadorNuevo.getHistorial().contains(partidoTest));
         }
 
         @Test
         @DisplayName("Debería permitir múltiples partidos en historial")
         void deberiaPermitirMultiplesPartidosEnHistorial() {
+            Jugador jugadorNuevo = new Jugador("Nuevo", "nuevo@email.com", "password123", zonaTest);
             Partido partido2 = new Partido();
             partido2.setTitulo("Partido Test 2");
             partido2.setFechaHora(LocalDateTime.now().plusDays(2));
             partido2.setZona(zonaTest);
             partido2.setDeporte(deporteTest);
-            partido2.setOrganizador(jugadorTest);
+            partido2.setOrganizador(jugadorNuevo);
             partido2.setDuracionMinutos(90);
             
-            jugadorTest.agregarAlHistorial(partidoTest);
-            jugadorTest.agregarAlHistorial(partido2);
+            jugadorNuevo.agregarAlHistorial(partidoTest);
             
-            assertEquals(2, jugadorTest.getHistorial().size());
-            assertTrue(jugadorTest.getHistorial().contains(partidoTest));
-            assertTrue(jugadorTest.getHistorial().contains(partido2));
+            assertEquals(2, jugadorNuevo.getHistorial().size());
+            assertTrue(jugadorNuevo.getHistorial().contains(partidoTest));
+            assertTrue(jugadorNuevo.getHistorial().contains(partido2));
         }
     }
 

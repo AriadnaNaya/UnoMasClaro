@@ -4,10 +4,6 @@ import com.tpo.unoMas.model.Nivel;
 import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
 
-/**
- * DTO para request de creación de partidos
- * RF3: Creación de un partido
- */
 public class CrearPartidoRequest {
     
     @NotBlank(message = "El título no puede estar vacío")

@@ -5,9 +5,7 @@ import com.tpo.unoMas.model.Nivel;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DTO para transferir información de jugadores
- */
+
 public class JugadorDTO {
     private Long id;
     private String nombre;

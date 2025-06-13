@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests exhaustivos para los Strategy Patterns del sistema
@@ -200,11 +201,17 @@ class StrategyPatternTest {
     @DisplayName("Tests de Estrategias de Notificación")
     class EstrategiasNotificacionTests {
 
+        private NotificacionEmailAdapter mockAdapter;
+
+        @BeforeEach
+        void setUp() {
+            mockAdapter = mock(NotificacionEmailAdapter.class);
+        }
+
         @Test
         @DisplayName("NotificacionEmail debería funcionar correctamente")
         void notificacionEmailShouldWork() {
-            NotificacionEmailAdapter javaMailAdapter = new AdapterJavaMail();
-            INotificacionStrategy estrategiaEmail = new NotificacionEmail(javaMailAdapter);
+            INotificacionStrategy estrategiaEmail = new NotificacionEmail(mockAdapter);
             Jugador jugador = jugadoresDisponibles.get(0);
             Notificacion notificacion = new Notificacion(
                 "Test Subject",
@@ -212,10 +219,13 @@ class StrategyPatternTest {
                 jugador
             );
             
-            // El envío de email es simulado, no debería lanzar excepciones
+            doNothing().when(mockAdapter).enviarEmail(any(Notificacion.class));
+            
             assertDoesNotThrow(() -> {
                 estrategiaEmail.enviarNotificacion(notificacion);
             });
+            
+            verify(mockAdapter).enviarEmail(notificacion);
         }
 
         @Test
@@ -240,8 +250,7 @@ class StrategyPatternTest {
         @Test
         @DisplayName("NotificacionEmail debería manejar jugador sin email")
         void notificacionEmailDeberiaManejarJugadorSinEmail() {
-            NotificacionEmailAdapter javaMailAdapter = new AdapterJavaMail();
-            INotificacionStrategy estrategiaEmail = new NotificacionEmail(javaMailAdapter);
+            INotificacionStrategy estrategiaEmail = new NotificacionEmail(mockAdapter);
             Jugador jugador = new Jugador("Sin Email", null, "password123", zonaTest);
             
             Notificacion notificacion = new Notificacion(
@@ -250,8 +259,10 @@ class StrategyPatternTest {
                 jugador
             );
             
-            // Debería manejar gracefully el caso de email null
-            assertDoesNotThrow(() -> {
+            doThrow(new IllegalArgumentException("No se puede enviar email: destinatario o email inválido"))
+                .when(mockAdapter).enviarEmail(any(Notificacion.class));
+            
+            assertThrows(IllegalArgumentException.class, () -> {
                 estrategiaEmail.enviarNotificacion(notificacion);
             });
         }
@@ -339,8 +350,8 @@ class StrategyPatternTest {
         @Test
         @DisplayName("Sistema debería funcionar con múltiples tipos de notificación")
         void sistemaDeberiaFuncionarConMultiplesTiposNotificacion() {
-            NotificacionEmailAdapter javaMailAdapter = new AdapterJavaMail();
-            INotificacionStrategy estrategiaEmail = new NotificacionEmail(javaMailAdapter);
+            NotificacionEmailAdapter mockAdapter = mock(NotificacionEmailAdapter.class);
+            INotificacionStrategy estrategiaEmail = new NotificacionEmail(mockAdapter);
             INotificacionStrategy estrategiaPush = new NotificacionPushFirebase();
             
             Jugador jugador = jugadoresDisponibles.get(0);
@@ -352,11 +363,15 @@ class StrategyPatternTest {
                 jugador
             );
             
+            doNothing().when(mockAdapter).enviarEmail(any(Notificacion.class));
+            
             // Ambas estrategias deberían funcionar
             assertDoesNotThrow(() -> {
                 estrategiaEmail.enviarNotificacion(notificacion);
                 estrategiaPush.enviarNotificacion(notificacion);
             });
+            
+            verify(mockAdapter).enviarEmail(notificacion);
         }
     }
 } 

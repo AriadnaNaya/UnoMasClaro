@@ -11,11 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Servicio que maneja las transiciones automáticas de estado por tiempo
- * - Confirmado → EnJuego: cuando llega la fecha/hora del encuentro
- * - EnJuego → Finalizado: cuando termina el partido (fecha + duración)
- */
+
 @Service
 @Transactional
 public class GestorEstadosPartidoService {

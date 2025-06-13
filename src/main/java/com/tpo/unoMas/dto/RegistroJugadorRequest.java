@@ -3,10 +3,7 @@ package com.tpo.unoMas.dto;
 import com.tpo.unoMas.model.Nivel;
 import jakarta.validation.constraints.*;
 
-/**
- * DTO para request de registro de jugadores
- * RF1: Registro de usuarios
- */
+
 public class RegistroJugadorRequest {
     
     @NotBlank(message = "El nombre no puede estar vacío")

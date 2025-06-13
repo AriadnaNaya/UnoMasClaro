@@ -55,13 +55,15 @@ public class Jugador {
     private List<Partido> historial = new ArrayList<>();
 
     public Jugador() {
-        
+        this.deportes = new ArrayList<>();
     }
+
     public Jugador(String nombre, String email, String password, Zona zona) {
         this.nombre = nombre;
         this.email = email;
         this.password = password;
         this.zona = zona;
+        this.deportes = new ArrayList<>();
     }
 
     public void agregarAFavoritos(Deporte deporte){

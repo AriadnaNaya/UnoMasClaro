@@ -1,13 +1,17 @@
 package com.tpo.unoMas.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotNull;
 
+@Embeddable
 public class Ubicacion {
-
-    @Column(name = "latitud", nullable = false, precision = 10, scale = 7)
+    @Column(name = "latitud", nullable = false)
+    @NotNull(message = "La latitud no puede ser nula")
     private Double latitud;      // ejemplo:  -34.6036840
 
-    @Column(name = "longitud", nullable = false, precision = 10, scale = 7)
+    @Column(name = "longitud", nullable = false)
+    @NotNull(message = "La longitud no puede ser nula")
     private Double longitud;     // ejemplo:  -58.3815591
 
     // Constructor vacío requerido por JPA

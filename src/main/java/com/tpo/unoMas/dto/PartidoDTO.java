@@ -4,9 +4,6 @@ import com.tpo.unoMas.model.Nivel;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * DTO para transferir información de partidos
- */
 public class PartidoDTO {
     private Long id;
     private String titulo;

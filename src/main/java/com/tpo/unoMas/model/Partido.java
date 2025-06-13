@@ -174,26 +174,29 @@ public class Partido implements Observable {
         jugadoresConfirmados.add(jugador);
 
         if (jugadoresConfirmados.size() == jugadores.size()) {
-            jugadoresConfirmados.add(jugador);
+            cambiarEstado(new Confirmado());
+            this.estadoDB = "Confirmado";
         }
-
     }
 
     public void iniciar() {
         if (this.estado != null) {
             this.estado.iniciarPartido(this);
+            this.estadoDB = "EnJuego";
         }
     }
 
     public void finalizar() {
         if (this.estado != null) {
             this.estado.finalizarPartido(this);
+            this.estadoDB = "Finalizado";
         }
     }
 
     public void cancelar() {
         if (this.estado != null) {
             this.estado.cancelarPartido(this);
+            this.estadoDB = "Cancelado";
         }
     }
 

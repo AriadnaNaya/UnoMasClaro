@@ -13,10 +13,6 @@ import java.util.HashMap;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
-/**
- * Servicio para gestión de jugadores
- * Implementa RF1: Registro de usuarios
- */
 @Service
 @Transactional
 public class JugadorService {
@@ -38,8 +34,14 @@ public class JugadorService {
 
 //-------------------------  Crud --------------------------------------------------------
     public Jugador guardar(Jugador jugador) {
+        if (jugador == null || jugador.getNombre() == null || jugador.getNombre().trim().isEmpty() ||
+            jugador.getEmail() == null || jugador.getEmail().trim().isEmpty() ||
+            jugador.getZona() == null) {
+            throw new IllegalArgumentException("Datos del jugador inválidos");
+        }
+
         if (jugadorRepository.existsByEmail(jugador.getEmail())) {
-            throw new RuntimeException("Ya existe un jugador con ese email");
+            throw new IllegalArgumentException("Ya existe un jugador con ese email");
         }
         return jugadorRepository.save(jugador);
     }
@@ -147,13 +149,11 @@ public class JugadorService {
 
 //-------------------------  Busqueda -------------------------------------------------
     public Jugador obtenerPorId(Long id) {
-        return jugadorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
+        return jugadorRepository.findById(id).orElse(null);
     }
 
     public Jugador obtenerPorEmail(String email) {
-        return jugadorRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
+        return jugadorRepository.findByEmail(email).orElse(null);
     }
 
     public List<Jugador> obtenerTodos() {

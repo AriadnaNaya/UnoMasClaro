@@ -99,6 +99,12 @@ class PartidoTest {
         @DisplayName("Debería cancelar partido desde cualquier estado válido")
         void deberiaCancelarPartidoDesdeEstadoValido() {
             // Desde NecesitamosJugadores
+            partidoTest.cambiarEstado(new NecesitamosJugadores());
+            // Agregar jugadores necesarios
+            for (int i = 0; i < deporteTest.getCantidadJugadores(); i++) {
+                partidoTest.agregarJugador(jugadorTest1);
+                partidoTest.confirmarAsistencia(jugadorTest1);
+            }
             partidoTest.cancelar();
             assertInstanceOf(Cancelado.class, partidoTest.getEstado());
             
@@ -111,6 +117,11 @@ class PartidoTest {
             partido2.setOrganizador(organizadorTest);
             partido2.setDuracionMinutos(90);
             
+            // Agregar jugadores necesarios
+            for (int i = 0; i < deporteTest.getCantidadJugadores(); i++) {
+                partido2.agregarJugador(jugadorTest1);
+                partido2.confirmarAsistencia(jugadorTest1);
+            }
             partido2.cambiarEstado(new PartidoArmado());
             partido2.cancelar();
             assertInstanceOf(Cancelado.class, partido2.getEstado());
