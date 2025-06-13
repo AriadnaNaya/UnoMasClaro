@@ -28,11 +28,12 @@ public interface PartidoRepository extends JpaRepository<Partido, Long> {
     @Query("SELECT p FROM Partido p WHERE p.fechaHora BETWEEN :fechaInicio AND :fechaFin")
     List<Partido> findByFechaHoraBetween(@Param("fechaInicio") LocalDateTime fechaInicio, 
                                        @Param("fechaFin") LocalDateTime fechaFin);
-
-//   No se tiene en cuenta el estado..
+    
     @Query("SELECT p FROM Partido p WHERE SIZE(p.jugadores) < p.deporte.cantidadJugadores")
     List<Partido> findPartidosConEspacioDisponible();
 
-    @Query("SELECT p FROM Partido p WHERE p.fechaHora > CURRENT_TIMESTAMP AND SIZE(p.jugadores) < p.deporte.cantidadJugadores")
+    @Query("SELECT p FROM Partido p WHERE p.fechaHora > CURRENT_TIMESTAMP " +
+           "AND SIZE(p.jugadores) < p.deporte.cantidadJugadores " +
+           "AND p.estadoDB = 'NecesitamosJugadores'")
     List<Partido> findPartidosActivos();
 } 

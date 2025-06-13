@@ -23,10 +23,7 @@ public class GestorEstadosPartidoService {
     @Autowired
     private PartidoRepository partidoRepository;
 
-    /**
-     * Ejecuta cada minuto para verificar transiciones automáticas por tiempo
-     */
-    @Scheduled(fixedRate = 60000) // Cada 60 segundos
+    @Scheduled(fixedRate = 60000)
     public void verificarTransicionesAutomaticas() {
         LocalDateTime ahora = LocalDateTime.now();
         
@@ -37,15 +34,12 @@ public class GestorEstadosPartidoService {
         finalizarPartidosEnJuego(ahora);
     }
 
-    /**
-     * Transiciona partidos de Confirmado a EnJuego cuando llega su hora
-     */
     private void iniciarPartidosConfirmados(LocalDateTime ahora) {
         List<Partido> partidos = partidoRepository.findAll();
         
         for (Partido partido : partidos) {
             // Solo partidos en estado Confirmado que ya llegaron a su hora
-            if (partido.getEstado() instanceof Confirmado && 
+            if ("Confirmado".equals(partido.getEstadoDB()) && 
                 partido.getFechaHora().isBefore(ahora.plusMinutes(1))) { // 1 minuto de tolerancia
                 
                 try {
@@ -60,15 +54,12 @@ public class GestorEstadosPartidoService {
         }
     }
 
-    /**
-     * Transiciona partidos de EnJuego a Finalizado cuando termina su duración
-     */
     private void finalizarPartidosEnJuego(LocalDateTime ahora) {
         List<Partido> partidos = partidoRepository.findAll();
         
         for (Partido partido : partidos) {
             // Solo partidos en estado EnJuego que ya terminaron
-            if (partido.getEstado() instanceof EnJuego) {
+            if ("EnJuego".equals(partido.getEstadoDB())) {
                 LocalDateTime horaFinalizacion = partido.getFechaHora()
                     .plusMinutes(partido.getDuracionMinutos());
                 
@@ -86,9 +77,6 @@ public class GestorEstadosPartidoService {
         }
     }
 
-    /**
-     * Método manual para verificar transiciones (útil para testing)
-     */
     public void verificarTransicionesManual() {
         verificarTransicionesAutomaticas();
     }

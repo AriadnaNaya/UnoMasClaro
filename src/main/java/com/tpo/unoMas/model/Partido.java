@@ -3,6 +3,8 @@ package com.tpo.unoMas.model;
 import com.tpo.unoMas.dto.PartidoDTO;
 import com.tpo.unoMas.model.estado.*;
 import com.tpo.unoMas.model.strategy.emparejamiento.EmparejamientoPorCercania;
+import com.tpo.unoMas.model.strategy.emparejamiento.EmparejamientoPorHistorial;
+import com.tpo.unoMas.model.strategy.emparejamiento.EmparejamientoPorNivel;
 import com.tpo.unoMas.model.strategy.emparejamiento.EstrategiaEmparejamiento;
 import com.tpo.unoMas.model.observer.Observable;
 import com.tpo.unoMas.model.observer.Observer;
@@ -60,6 +62,9 @@ public class Partido implements Observable {
 
     @Transient
     private EstrategiaEmparejamiento estrategiaEmparejamiento;
+    //IDEM ESTADO
+    @Column(name = "estrategia")
+    private String estrategiaDB;
 
     @NotNull(message = "El organizador no puede ser null")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -89,6 +94,8 @@ public class Partido implements Observable {
         this.jugadoresConfirmados = new HashSet<>();
         this.estrategiaEmparejamiento = new EmparejamientoPorCercania();
         this.estado = new NecesitamosJugadores();
+        this.estadoDB = this.estado.getClass().getSimpleName();
+        this.estrategiaDB = this.estrategiaEmparejamiento.getClass().getSimpleName();
         this.observers = new ArrayList<>();
     }
 
@@ -99,7 +106,9 @@ public class Partido implements Observable {
         this.jugadores = new ArrayList<>();
         this.jugadoresConfirmados = new HashSet<>();
         this.estado = new NecesitamosJugadores();
+        this.estadoDB = this.estado.getClass().getSimpleName();
         this.estrategiaEmparejamiento = new EmparejamientoPorCercania();
+        this.estrategiaDB = this.estrategiaEmparejamiento.getClass().getSimpleName();
         this.observers = new ArrayList<>();
     }
 
@@ -115,7 +124,17 @@ public class Partido implements Observable {
             case "PartidoArmado"  -> this.estado = new PartidoArmado();
             default -> throw new IllegalStateException("Estado inválido: " + estadoDB);
         }
+
+        switch (estrategiaDB) {
+            case "EmparejamientoPorCercania" -> this.estrategiaEmparejamiento = new EmparejamientoPorCercania();
+            case "EmparejamientoPorHistorial" -> this.estrategiaEmparejamiento = new EmparejamientoPorHistorial();
+            case "EmparejamientoPorNivel" -> this.estrategiaEmparejamiento = new EmparejamientoPorNivel();
+            default -> throw new IllegalStateException("Estrategia inválida: " + estrategiaDB);
+        }
     }
+
+    //Lo mismo para la estrategia?
+
 
 
     public List<Jugador> matchearJugadores(List<Jugador> jugadores) {
@@ -183,10 +202,10 @@ public class Partido implements Observable {
     public void cambiarEstado(EstadoPartido nuevoEstado) {
         Objects.requireNonNull(nuevoEstado, "El nuevo estado no puede ser null");
         this.estado = nuevoEstado;
+        this.estadoDB = nuevoEstado.getClass().getSimpleName();
 
         //Cada vez que se hace un cambio de estado se notifica a los observadores
         notifyObservers();
-
     }
 
     public boolean agregarJugadorInterno(Jugador jugador) {
@@ -330,6 +349,14 @@ public class Partido implements Observable {
 
     public void setEstadoDB(String estadoDB) {
         this.estadoDB = estadoDB;
+    }
+
+    public String getEstrategiaDB() {
+        return estrategiaDB;
+    }
+
+    public void setEstrategiaDB(String estrategiaDB) {
+        this.estrategiaDB = estrategiaDB;
     }
 
     @Override
