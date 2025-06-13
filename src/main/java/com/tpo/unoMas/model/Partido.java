@@ -133,10 +133,6 @@ public class Partido implements Observable {
         }
     }
 
-    //Lo mismo para la estrategia?
-
-
-
     public List<Jugador> matchearJugadores(List<Jugador> jugadores) {
         return this.estrategiaEmparejamiento.encontrarJugadoresPotenciales(this, jugadores);
     }
