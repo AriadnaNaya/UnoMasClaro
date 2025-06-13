@@ -12,4 +12,5 @@ public interface EstrategiaEmparejamiento {
     String getDescripcion();
 
     boolean esCompatible(Partido partido, Jugador jugador);
+
 }

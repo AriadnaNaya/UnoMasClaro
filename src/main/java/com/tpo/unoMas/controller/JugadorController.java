@@ -41,7 +41,9 @@ public class JugadorController {
             jugador.setPassword(request.getPassword());
 
             Jugador jugadorGuardado = jugadorService.guardar(jugador);
+
             JugadorDTO jugadorDTO = jugadorGuardado.convertirADTO();
+
             return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                 "mensaje", "Jugador registrado exitosamente",
                 "jugador", jugadorDTO

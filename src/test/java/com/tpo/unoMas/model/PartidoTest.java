@@ -213,7 +213,7 @@ class PartidoTest {
             List<Jugador> jugadoresDisponibles = Arrays.asList(jugadorCerca, jugadorLejos);
             
             partidoTest.cambiarEstrategiaEmparejamiento(new EmparejamientoPorCercania());
-            List<Jugador> resultado = partidoTest.invitarJugadores(jugadoresDisponibles);
+            List<Jugador> resultado = partidoTest.matchearJugadores(jugadoresDisponibles);
             
             assertFalse(resultado.isEmpty());
             // El jugador cerca debería estar antes que el lejano
@@ -242,7 +242,7 @@ class PartidoTest {
             List<Jugador> jugadoresDisponibles = Arrays.asList(jugadorTest1, jugadorTest2);
             
             partidoTest.cambiarEstrategiaEmparejamiento(new EmparejamientoPorNivel());
-            List<Jugador> resultado = partidoTest.invitarJugadores(jugadoresDisponibles);
+            List<Jugador> resultado = partidoTest.matchearJugadores(jugadoresDisponibles);
             
             // Jugador con nivel intermedio debería tener prioridad
             assertTrue(resultado.contains(jugadorTest1));
@@ -257,7 +257,7 @@ class PartidoTest {
             List<Jugador> jugadoresDisponibles = Arrays.asList(jugadorTest1, jugadorTest2);
             
             partidoTest.cambiarEstrategiaEmparejamiento(new EmparejamientoPorHistorial());
-            List<Jugador> resultado = partidoTest.invitarJugadores(jugadoresDisponibles);
+            List<Jugador> resultado = partidoTest.matchearJugadores(jugadoresDisponibles);
             
             assertFalse(resultado.isEmpty());
         }

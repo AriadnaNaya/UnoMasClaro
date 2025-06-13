@@ -66,6 +66,7 @@ public class JugadorService {
     }
 //------------------------- En flujo envio notificaciones -------------------------------------------------
 
+    //Devuelve todos los jugadores que estan disponibles en la fecha y hora de un partido
     public List<Jugador> obtenerDisponiblesParaPartido(LocalDateTime fechaHora, int duracionMinutos, Long organizadorId) {
         List<Jugador> jugadores = jugadorRepository.findAll().stream()
             .filter(j -> !j.getId().equals(organizadorId))

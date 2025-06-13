@@ -488,8 +488,8 @@ public class DemoCompleto implements CommandLineRunner {
         List<Jugador> jugadoresDisponibles = Arrays.asList(jugador1, jugador2, jugador3);
         
         partido.cambiarEstrategiaEmparejamiento(new EmparejamientoPorNivel());
-        List<Jugador> invitados = partido.invitarJugadores(jugadoresDisponibles);
-        System.out.println("3️⃣  Jugadores invitados usando estrategia por nivel: " + invitados.size());
+        List<Jugador> invitados = partido.matchearJugadores(jugadoresDisponibles);
+        System.out.println("3️⃣  Jugadores matcheados usando estrategia por nivel: " + invitados.size());
         
         // 6. Simular que algunos jugadores se unen
         for (Jugador jugador : invitados.subList(0, Math.min(2, invitados.size()))) {

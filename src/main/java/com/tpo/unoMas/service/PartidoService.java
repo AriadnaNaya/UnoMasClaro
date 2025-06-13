@@ -60,9 +60,6 @@ public class PartidoService {
             .collect(Collectors.toList());
     }
 
-    /**
-     * Obtener partido por ID
-     */
     public Partido obtenerPorId(Long id) {
         return partidoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Partido no encontrado"));
