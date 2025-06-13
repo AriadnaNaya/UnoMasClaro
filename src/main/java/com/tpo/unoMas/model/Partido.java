@@ -1,8 +1,7 @@
 package com.tpo.unoMas.model;
 
 import com.tpo.unoMas.dto.PartidoDTO;
-import com.tpo.unoMas.model.estado.EstadoPartido;
-import com.tpo.unoMas.model.estado.NecesitamosJugadores;
+import com.tpo.unoMas.model.estado.*;
 import com.tpo.unoMas.model.strategy.emparejamiento.EmparejamientoPorCercania;
 import com.tpo.unoMas.model.strategy.emparejamiento.EstrategiaEmparejamiento;
 import com.tpo.unoMas.model.observer.Observable;
@@ -52,6 +51,12 @@ public class Partido implements Observable {
 
     @Transient
     private EstadoPartido estado;
+    //Que el estado sea Transient quiere decir que no se guarda en la DB, que no se persiste
+    //Entiendo entonces que cuando traemos un partido del repositorio, esto seria null
+
+    //Por lo de arriba, Y SOLO POR lO DE ARRIBA, guardamos en la DB el estado
+    @Column(name = "estado")
+    private String estadoDB;
 
     @Transient
     private EstrategiaEmparejamiento estrategiaEmparejamiento;
@@ -98,6 +103,19 @@ public class Partido implements Observable {
         this.observers = new ArrayList<>();
     }
 
+    //Podria ser un Factory
+    @PostLoad
+    public void inicializarEstado() {
+        switch (estadoDB) {
+            case "Cancelado" -> this.estado = new Cancelado();
+            case "Confirmado"   -> this.estado = new Confirmado();
+            case "EnJuego" -> this.estado = new EnJuego();
+            case "Finalizado"  -> this.estado = new Finalizado();
+            case "NecesitamosJugadores"  -> this.estado = new NecesitamosJugadores();
+            case "PartidoArmado"  -> this.estado = new PartidoArmado();
+            default -> throw new IllegalStateException("Estado inválido: " + estadoDB);
+        }
+    }
 
 
     public List<Jugador> matchearJugadores(List<Jugador> jugadores) {
@@ -304,6 +322,14 @@ public class Partido implements Observable {
 
     public EstrategiaEmparejamiento getEstrategiaEmparejamiento() {
         return this.estrategiaEmparejamiento;
+    }
+
+    public String getEstadoDB() {
+        return estadoDB;
+    }
+
+    public void setEstadoDB(String estadoDB) {
+        this.estadoDB = estadoDB;
     }
 
     @Override

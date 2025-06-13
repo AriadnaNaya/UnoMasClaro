@@ -34,6 +34,7 @@ public class PartidoArmado extends EstadoPartido {
 
         if (partido.getJugadores().size() < partido.getDeporte().getCantidadJugadores()) {
             partido.cambiarEstado(new NecesitamosJugadores());
+            partido.setEstadoDB("NecesitamosJugadores");
         }
     }
 
@@ -42,6 +43,7 @@ public class PartidoArmado extends EstadoPartido {
         //Si todos los jugadores confirmaron, pasamos al estado Confirmado
         if (partido.getJugadoresConfirmados().size() == partido.getJugadores().size()) {
             partido.cambiarEstado(new Confirmado());
+            partido.setEstadoDB("Confirmado");
         }
     }
 

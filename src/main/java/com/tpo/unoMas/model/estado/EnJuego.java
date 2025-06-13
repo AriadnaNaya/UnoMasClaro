@@ -35,12 +35,14 @@ public class EnJuego extends EstadoPartido{
         }
         
         partido.cambiarEstado(new Finalizado());
+        partido.setEstadoDB("Finalizado");
     }
 
     @Override
     public void cancelarPartido(Partido partido) {
         Objects.requireNonNull(partido, "El partido no puede ser null");
         partido.cambiarEstado(new Cancelado());
+        partido.setEstadoDB("Cancelado");
     }
 
     @Override

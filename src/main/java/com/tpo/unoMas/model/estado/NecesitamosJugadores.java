@@ -15,6 +15,7 @@ public class NecesitamosJugadores extends EstadoPartido {
 
         if (partido.getJugadores().size() == partido.getDeporte().getCantidadJugadores()) {
             partido.cambiarEstado(new PartidoArmado());
+            partido.setEstadoDB("PartidoArmado");
         }
     }
 
