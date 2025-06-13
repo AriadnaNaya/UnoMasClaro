@@ -14,7 +14,7 @@ public class EmparejamientoPorHistorial implements EstrategiaEmparejamiento {
         return jugadoresDisponibles.stream()
                 .filter(jugador -> esJugadorCompatible(jugador, partido))
                 .filter(jugador -> esCompatible(partido, jugador))
-                .limit(20) 
+                .limit(20)
                 .collect(Collectors.toList());
     }
     @Override

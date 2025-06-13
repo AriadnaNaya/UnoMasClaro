@@ -36,24 +36,6 @@ public class JugadorService {
     @Autowired
     private DeporteJugadorRepository deporteJugadorRepository;
 
-    public Jugador obtenerPorId(Long id) {
-        return jugadorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
-    }
-
-    public Jugador obtenerPorEmail(String email) {
-        return jugadorRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
-    }
-
-    public List<Jugador> obtenerTodos() {
-        return jugadorRepository.findAll();
-    }
-
-    public List<Jugador> obtenerPorZona(Long zonaId) {
-        return jugadorRepository.findByZonaId(zonaId);
-    }
-
 //  Update
     public Jugador actualizarJugador(Long id, RegistroJugadorRequest request) {
         Jugador jugador = obtenerPorId(id);
@@ -102,6 +84,7 @@ public class JugadorService {
         }
         return jugadorRepository.save(jugador);
     }
+//-------------------------  Manejo Deportes -------------------------------------------------
 
     public Jugador agregarDeporte(Long jugadorId, Long deporteId, Nivel nivel) {
         Jugador jugador = obtenerPorId(jugadorId);
@@ -118,8 +101,6 @@ public class JugadorService {
         deporteJugadorRepository.save(dj);
         return jugadorRepository.save(jugador);
     }
-
-
 
     public Jugador eliminarDeporteFavorito(Long jugadorId, Long deporteId) {
         Jugador jugador = obtenerPorId(jugadorId);
@@ -160,6 +141,27 @@ public class JugadorService {
         deporteJugadorRepository.save(dj);
         return jugadorRepository.save(jugador);
     }
+
+//-------------------------  Busqueda -------------------------------------------------
+    public Jugador obtenerPorId(Long id) {
+        return jugadorRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
+    }
+
+    public Jugador obtenerPorEmail(String email) {
+        return jugadorRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
+    }
+
+    public List<Jugador> obtenerTodos() {
+        return jugadorRepository.findAll();
+    }
+
+    public List<Jugador> obtenerPorZona(Long zonaId) {
+        return jugadorRepository.findByZonaId(zonaId);
+    }
+
+//-------------------------  DTO -------------------------------------------------
 
     public JugadorDTO convertirADTO(Jugador jugador) {
         JugadorDTO dto = new JugadorDTO();

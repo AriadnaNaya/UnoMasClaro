@@ -22,10 +22,6 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 
-/**
- * Controller REST para gestión de jugadores/usuarios
- * Implementa el requerimiento RF1: Registro de usuarios
- */
 @RestController
 @RequestMapping("/api/jugadores")
 @CrossOrigin(origins = "*")
