@@ -144,35 +144,36 @@ public class JugadorController {
             ));
         }
     }
-    
-    @Operation(summary = "Agregar deporte favorito", description = "Agrega un deporte favorito al jugador con el nivel especificado. Lanza error si ya es favorito.")
-    @ApiResponse(responseCode = "200", description = "Deporte favorito agregado", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\n  'mensaje': 'Deporte favorito agregado',\n  'jugador': { ... }\n}")))
-    @ApiResponse(responseCode = "400", description = "Error de validación", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\n  'error': 'No se pudo agregar deporte favorito',\n  'detalle': 'El deporte ya está marcado como favorito para este jugador'\n}")))
+
+
+    @Operation(summary = "Agregar deporte a jugador", description = "Agrega un deporte al jugador con el nivel especificado. El deporte no se marca como favorito por defecto.")
+    @ApiResponse(responseCode = "200", description = "Deporte agregado exitosamente", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\n  'mensaje': 'Deporte agregado exitosamente',\n  'jugador': { ... }\n}")))
+    @ApiResponse(responseCode = "400", description = "Error de validación", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\n  'error': 'No se pudo agregar el deporte',\n  'detalle': 'El jugador ya tiene este deporte asociado'\n}")))
     @io.swagger.v3.oas.annotations.parameters.RequestBody(
-        required = true,
-        content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\n  'deporteId': 1,\n  'nivel': 'INTERMEDIO'\n}")))
-    @PostMapping("/{id}/deportes-favoritos")
-    public ResponseEntity<?> agregarDeporteFavorito(@PathVariable Long id, @RequestBody Map<String, Object> body) {
+            required = true,
+            content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\n  'deporteId': 1,\n  'nivel': 'INTERMEDIO'\n}")))
+    @PostMapping("/{id}/deportes")
+    public ResponseEntity<?> agregarDeporte(@PathVariable Long id, @RequestBody Map<String, Object> body) {
         try {
             Long deporteId = Long.valueOf(body.get("deporteId").toString());
             Nivel nivel = Nivel.valueOf(body.get("nivel").toString());
-            Jugador jugador = jugadorService.agregarDeporteFavorito(id, deporteId, nivel);
+            Jugador jugador = jugadorService.agregarDeporte(id, deporteId, nivel);
             return ResponseEntity.ok(Map.of(
-                "mensaje", "Deporte favorito agregado",
-                "jugador", jugador.convertirADTO()
+                    "mensaje", "Deporte agregado exitosamente",
+                    "jugador", jugador.convertirADTO()
             ));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
-                "error", "No se pudo agregar deporte favorito",
-                "detalle", e.getMessage()
+                    "error", "No se pudo agregar el deporte",
+                    "detalle", e.getMessage()
             ));
         }
     }
 
-    /**
-     * Eliminar un deporte favorito del jugador
-     */
-    @Operation(summary = "Eliminar deporte favorito", description = "Elimina un deporte favorito del jugador (lo marca como no favorito, no borra la relación).")
+
+
+    //  Eliminar Deporte de jugador
+    @Operation(summary = "Eliminar deporte", description = "Elimina un deporte favorito del jugador (lo marca como no favorito, no borra la relación).")
     @ApiResponse(responseCode = "200", description = "Deporte favorito eliminado", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\n  'mensaje': 'Deporte favorito eliminado',\n  'jugador': { ... }\n}")))
     @ApiResponse(responseCode = "400", description = "Error de validación", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\n  'error': 'No se pudo eliminar deporte favorito',\n  'detalle': '...'\n}")))
     @DeleteMapping("/{id}/deportes-favoritos/{deporteId}")
@@ -191,9 +192,8 @@ public class JugadorController {
         }
     }
 
-    /**
-     * Actualizar el nivel de un deporte favorito del jugador
-     */
+
+//  Actualizar el nivel de un deporte  del jugador
     @Operation(summary = "Actualizar nivel de deporte favorito", description = "Actualiza el nivel de un deporte favorito del jugador. Lanza error si el deporte no está asociado.")
     @ApiResponse(responseCode = "200", description = "Nivel de deporte actualizado", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\n  'mensaje': 'Nivel de deporte actualizado',\n  'jugador': { ... }\n}")))
     @ApiResponse(responseCode = "400", description = "Error de validación", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\n  'error': 'No se pudo actualizar el nivel del deporte',\n  'detalle': '...'\n}")))
@@ -217,4 +217,29 @@ public class JugadorController {
         }
     }
 
+    /**
+     * Modificar el estado de favorito de un deporte
+     */
+    @Operation(summary = "Modificar estado de favorito", description = "Modifica si un deporte es favorito o no para el jugador.")
+    @ApiResponse(responseCode = "200", description = "Estado de favorito modificado", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\n  'mensaje': 'Estado de favorito modificado',\n  'jugador': { ... }\n}")))
+    @ApiResponse(responseCode = "400", description = "Error de validación", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\n  'error': 'No se pudo modificar el estado de favorito',\n  'detalle': 'El jugador no tiene este deporte asociado'\n}")))
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+        required = true,
+        content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "{\n  'esFavorito': true\n}")))
+    @PutMapping("/{id}/deportes/{deporteId}/favorito")
+    public ResponseEntity<?> modificarEstadoFavorito(@PathVariable Long id, @PathVariable Long deporteId, @RequestBody Map<String, Object> body) {
+        try {
+            boolean esFavorito = Boolean.valueOf(body.get("esFavorito").toString());
+            Jugador jugador = jugadorService.modificarEstadoFavorito(id, deporteId, esFavorito);
+            return ResponseEntity.ok(Map.of(
+                "mensaje", "Estado de favorito modificado",
+                "jugador", jugador.convertirADTO()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "error", "No se pudo modificar el estado de favorito",
+                "detalle", e.getMessage()
+            ));
+        }
+    }
 } 

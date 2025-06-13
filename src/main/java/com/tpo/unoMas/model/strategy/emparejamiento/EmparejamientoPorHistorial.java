@@ -7,10 +7,6 @@ import com.tpo.unoMas.model.Partido;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Estrategia de emparejamiento por historial de partidos previos
- * Busca jugadores que han jugado en la misma zona o con el organizador anteriormente
- */
 public class EmparejamientoPorHistorial implements EstrategiaEmparejamiento {
 
     @Override
@@ -18,7 +14,7 @@ public class EmparejamientoPorHistorial implements EstrategiaEmparejamiento {
         return jugadoresDisponibles.stream()
                 .filter(jugador -> esJugadorCompatible(jugador, partido))
                 .filter(jugador -> esCompatible(partido, jugador))
-                .limit(20) // Limitar invitaciones
+                .limit(20) 
                 .collect(Collectors.toList());
     }
     @Override
@@ -26,10 +22,6 @@ public class EmparejamientoPorHistorial implements EstrategiaEmparejamiento {
         return "Busca jugadores basado en historial de partidos previos en la zona";
     }
 
-    
-    /**
-     * Verifica compatibilidad básica del jugador con el partido
-     */
     private boolean esJugadorCompatible(Jugador jugador, Partido partido) {
         boolean noEsOrganizador = !jugador.equals(partido.getOrganizador());
         boolean noEstaEnPartido = !partido.getJugadores().contains(jugador);

@@ -308,12 +308,6 @@ class JugadorTest {
             assertEquals(nuevoEmail, jugadorTest.getEmail());
         }
 
-        @Test
-        @DisplayName("Debería modificar nivel correctamente")
-        void deberiaModificarNivelCorrectamente() {
-            jugadorTest.setNivel(Nivel.AVANZADO);
-            assertEquals(Nivel.AVANZADO, jugadorTest.getNivel());
-        }
 
         @Test
         @DisplayName("Debería modificar token FCM correctamente")

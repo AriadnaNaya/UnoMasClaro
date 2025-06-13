@@ -76,26 +76,6 @@ public class JugadorService {
         return jugadorRepository.save(jugador);
     }
 
-
-    /**
-     * Convertir Jugador a DTO
-     */
-    public JugadorDTO convertirADTO(Jugador jugador) {
-        JugadorDTO dto = new JugadorDTO();
-        dto.setId(jugador.getId());
-        dto.setNombre(jugador.getNombre());
-        dto.setEmail(jugador.getEmail());
-        dto.setZona(jugador.getZona().getNombre());
-        dto.setTelefono(jugador.getTelefono());
-        
-
-        
-        return dto;
-    }
-
-    /**
-     * Obtener jugadores disponibles para un partido (excluyendo al organizador y sin solapamiento de horarios)
-     */
     public List<Jugador> obtenerDisponiblesParaPartido(LocalDateTime fechaHora, int duracionMinutos, Long organizadorId) {
         List<Jugador> jugadores = jugadorRepository.findAll().stream()
             .filter(j -> !j.getId().equals(organizadorId))
@@ -117,37 +97,30 @@ public class JugadorService {
     }
 
     public Jugador guardar(Jugador jugador) {
-        // Validar que el email no exista
         if (jugadorRepository.existsByEmail(jugador.getEmail())) {
             throw new RuntimeException("Ya existe un jugador con ese email");
         }
         return jugadorRepository.save(jugador);
     }
 
-    /**
-     * Agregar un deporte favorito al jugador
-     */
-    public Jugador agregarDeporteFavorito(Long jugadorId, Long deporteId, Nivel nivel) {
+    public Jugador agregarDeporte(Long jugadorId, Long deporteId, Nivel nivel) {
         Jugador jugador = obtenerPorId(jugadorId);
         Deporte deporte = deporteRepository.findById(deporteId)
                 .orElseThrow(() -> new RuntimeException("Deporte no encontrado"));
+
         DeporteJugador dj = deporteJugadorRepository.findByJugadorAndDeporte(jugador, deporte);
-        if (dj == null) {
-            dj = new DeporteJugador(jugador, deporte, nivel, true);
-            jugador.getDeportes().add(dj);
-        } else if (dj.esFavorito()) {
-            throw new RuntimeException("El deporte ya está marcado como favorito para este jugador");
-        } else {
-            dj.setEsFavorito(true);
-            dj.setNivel(nivel);
+        if (dj != null) {
+            throw new RuntimeException("El jugador ya tiene este deporte asociado");
         }
+
+        dj = new DeporteJugador(jugador, deporte, nivel, false);
+        jugador.getDeportes().add(dj);
         deporteJugadorRepository.save(dj);
         return jugadorRepository.save(jugador);
     }
 
-    /**
-     * Eliminar un deporte de los favoritos del jugador
-     */
+
+
     public Jugador eliminarDeporteFavorito(Long jugadorId, Long deporteId) {
         Jugador jugador = obtenerPorId(jugadorId);
         Deporte deporte = deporteRepository.findById(deporteId)
@@ -160,9 +133,6 @@ public class JugadorService {
         return jugadorRepository.save(jugador);
     }
 
-    /**
-     * Actualizar el nivel de un deporte favorito del jugador
-     */
     public Jugador actualizarNivelDeporte(Long jugadorId, Long deporteId, Nivel nivel) {
         Jugador jugador = obtenerPorId(jugadorId);
         Deporte deporte = deporteRepository.findById(deporteId)
@@ -174,5 +144,33 @@ public class JugadorService {
         dj.setNivel(nivel);
         deporteJugadorRepository.save(dj);
         return jugadorRepository.save(jugador);
+    }
+
+    public Jugador modificarEstadoFavorito(Long jugadorId, Long deporteId, boolean esFavorito) {
+        Jugador jugador = obtenerPorId(jugadorId);
+        Deporte deporte = deporteRepository.findById(deporteId)
+                .orElseThrow(() -> new RuntimeException("Deporte no encontrado"));
+        
+        DeporteJugador dj = deporteJugadorRepository.findByJugadorAndDeporte(jugador, deporte);
+        if (dj == null) {
+            throw new RuntimeException("El jugador no tiene este deporte asociado");
+        }
+        
+        dj.setEsFavorito(esFavorito);
+        deporteJugadorRepository.save(dj);
+        return jugadorRepository.save(jugador);
+    }
+
+    public JugadorDTO convertirADTO(Jugador jugador) {
+        JugadorDTO dto = new JugadorDTO();
+        dto.setId(jugador.getId());
+        dto.setNombre(jugador.getNombre());
+        dto.setEmail(jugador.getEmail());
+        dto.setZona(jugador.getZona().getNombre());
+        dto.setTelefono(jugador.getTelefono());
+
+
+
+        return dto;
     }
 } 

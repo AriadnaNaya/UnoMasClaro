@@ -113,10 +113,6 @@ public class PartidoController {
         }
     }
 
-    /**
-     * RF2: Búsqueda de partidos
-     * Los usuarios podrán buscar encuentros deportivos en su zona donde falten jugadores
-     */
     @PostMapping("/buscar")
     public ResponseEntity<?> buscarPartidos(Long jugadorID) {
         try {
@@ -138,9 +134,7 @@ public class PartidoController {
         }
     }
 
-    /**
-     * Obtener partido por ID
-     */
+
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerPartido(@PathVariable Long id) {
         try {
@@ -157,9 +151,7 @@ public class PartidoController {
         }
     }
 
-    /**
-     * Unirse a un partido
-     */
+
     @PostMapping("/{id}/unirse")
     public ResponseEntity<?> unirseAPartido(@PathVariable Long id, @RequestParam Long jugadorId) {
         Jugador jugador = jugadorService.obtenerPorId(jugadorId);
@@ -169,9 +161,6 @@ public class PartidoController {
         ));
     }
 
-    /**
-     * Salirse de un partido
-     */
     @PostMapping("/{id}/salirse")
     public ResponseEntity<?> salirseDePartido(@PathVariable Long id, @RequestParam Long jugadorId) {
         Jugador jugador = jugadorService.obtenerPorId(jugadorId);
@@ -181,9 +170,7 @@ public class PartidoController {
         ));
     }
 
-    /**
-     * Cancelar partido - Solo acción manual permitida para el organizador
-     */
+
     @PostMapping("/{id}/cancelar")
     public ResponseEntity<?> cancelarPartido(@PathVariable Long id, 
                                             @RequestParam Long organizadorId) {
@@ -201,9 +188,6 @@ public class PartidoController {
         }
     }
 
-    /**
-     * Confirmar participación en partido
-     */
     @PostMapping("/{id}/confirmar")
     public ResponseEntity<?> confirmarParticipacion(@PathVariable Long id, @RequestParam Long jugadorId) {
         Jugador jugador = jugadorService.obtenerPorId(jugadorId);

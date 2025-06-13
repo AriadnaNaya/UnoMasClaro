@@ -38,7 +38,7 @@ public class PartidoService {
     }
 
     public List<Partido> buscarPartidosCompatiblesParaJugador(Jugador jugador) {
-        List<Partido> todosLosPartidos = partidoRepository.findAll();
+        List<Partido> todosLosPartidos = partidoRepository.findPartidosActivos();
         return todosLosPartidos.stream()
             .filter(partido -> {
                 EstrategiaEmparejamiento estrategia = partido.getEstrategiaEmparejamiento();

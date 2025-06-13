@@ -7,7 +7,6 @@ import com.tpo.unoMas.model.strategy.emparejamiento.EmparejamientoPorCercania;
 import com.tpo.unoMas.model.strategy.emparejamiento.EstrategiaEmparejamiento;
 import com.tpo.unoMas.model.observer.Observable;
 import com.tpo.unoMas.model.observer.Observer;
-import com.tpo.unoMas.service.PartidoService;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.*;

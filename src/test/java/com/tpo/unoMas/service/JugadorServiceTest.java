@@ -58,7 +58,7 @@ class JugadorServiceTest {
         when(jugadorRepository.save(any(Jugador.class))).thenReturn(jugadorTest);
 
         // Act
-        Jugador result = jugadorService.crearJugador(jugadorTest);
+        Jugador result = jugadorService.guardar(jugadorTest);
 
         // Assert
         assertNotNull(result);
@@ -77,7 +77,7 @@ class JugadorServiceTest {
 
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> {
-            jugadorService.crearJugador(jugadorTest);
+            jugadorService.guardar(jugadorTest);
         });
         
         verify(jugadorRepository).existsByEmail(jugadorTest.getEmail());
@@ -92,7 +92,7 @@ class JugadorServiceTest {
         when(jugadorRepository.findById(jugadorId)).thenReturn(Optional.of(jugadorTest));
 
         // Act
-        Optional<Jugador> result = jugadorService.obtenerJugadorPorId(jugadorId);
+        Optional<Jugador> result = Optional.ofNullable(jugadorService.obtenerPorId(jugadorId));
 
         // Assert
         assertTrue(result.isPresent());
@@ -109,7 +109,7 @@ class JugadorServiceTest {
         when(jugadorRepository.findById(jugadorId)).thenReturn(Optional.empty());
 
         // Act
-        Optional<Jugador> result = jugadorService.obtenerJugadorPorId(jugadorId);
+        Optional<Jugador> result = Optional.ofNullable(jugadorService.obtenerPorId(jugadorId));
 
         // Assert
         assertFalse(result.isPresent());
@@ -126,7 +126,7 @@ class JugadorServiceTest {
         when(jugadorRepository.findAll()).thenReturn(jugadores);
 
         // Act
-        List<Jugador> result = jugadorService.obtenerTodosLosJugadores();
+        List<Jugador> result = jugadorService.obtenerTodos();
 
         // Assert
         assertNotNull(result);
@@ -137,80 +137,6 @@ class JugadorServiceTest {
         verify(jugadorRepository).findAll();
     }
 
-    @Test
-    @DisplayName("Debería actualizar jugador existente")
-    void deberiaActualizarJugadorExistente() {
-        // Arrange
-        Long jugadorId = 1L;
-        Jugador jugadorActualizado = new Jugador("Juan Actualizado", "juan.nuevo@email.com", "newpass123", zonaTest);
-        
-        when(jugadorRepository.findById(jugadorId)).thenReturn(Optional.of(jugadorTest));
-        when(jugadorRepository.save(any(Jugador.class))).thenReturn(jugadorActualizado);
-
-        // Act
-        Optional<Jugador> result = jugadorService.actualizarJugador(jugadorId, jugadorActualizado);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals("Juan Actualizado", result.get().getNombre());
-        
-        verify(jugadorRepository).findById(jugadorId);
-        verify(jugadorRepository).save(any(Jugador.class));
-    }
-
-    @Test
-    @DisplayName("No debería actualizar jugador inexistente")
-    void noDeberiaActualizarJugadorInexistente() {
-        // Arrange
-        Long jugadorId = 999L;
-        Jugador jugadorActualizado = new Jugador("Nuevo", "nuevo@email.com", "pass123", zonaTest);
-        
-        when(jugadorRepository.findById(jugadorId)).thenReturn(Optional.empty());
-
-        // Act
-        Optional<Jugador> result = jugadorService.actualizarJugador(jugadorId, jugadorActualizado);
-
-        // Assert
-        assertFalse(result.isPresent());
-        
-        verify(jugadorRepository).findById(jugadorId);
-        verify(jugadorRepository, never()).save(any());
-    }
-
-    @Test
-    @DisplayName("Debería eliminar jugador existente")
-    void deberiaEliminarJugadorExistente() {
-        // Arrange
-        Long jugadorId = 1L;
-        when(jugadorRepository.existsById(jugadorId)).thenReturn(true);
-        doNothing().when(jugadorRepository).deleteById(jugadorId);
-
-        // Act
-        boolean result = jugadorService.eliminarJugador(jugadorId);
-
-        // Assert
-        assertTrue(result);
-        
-        verify(jugadorRepository).existsById(jugadorId);
-        verify(jugadorRepository).deleteById(jugadorId);
-    }
-
-    @Test
-    @DisplayName("No debería eliminar jugador inexistente")
-    void noDeberiaEliminarJugadorInexistente() {
-        // Arrange
-        Long jugadorId = 999L;
-        when(jugadorRepository.existsById(jugadorId)).thenReturn(false);
-
-        // Act
-        boolean result = jugadorService.eliminarJugador(jugadorId);
-
-        // Assert
-        assertFalse(result);
-        
-        verify(jugadorRepository).existsById(jugadorId);
-        verify(jugadorRepository, never()).deleteById(any());
-    }
 
     @Test
     @DisplayName("Debería buscar jugadores por email")
@@ -220,7 +146,7 @@ class JugadorServiceTest {
         when(jugadorRepository.findByEmail(email)).thenReturn(Optional.of(jugadorTest));
 
         // Act
-        Optional<Jugador> result = jugadorService.buscarPorEmail(email);
+        Optional<Jugador> result = Optional.ofNullable(jugadorService.obtenerPorEmail(email));
 
         // Assert
         assertTrue(result.isPresent());
@@ -238,7 +164,7 @@ class JugadorServiceTest {
         when(jugadorRepository.findByZona(zonaTest)).thenReturn(jugadores);
 
         // Act
-        List<Jugador> result = jugadorService.buscarPorZona(zonaTest);
+        List<Jugador> result = jugadorService.obtenerPorZona(zonaTest.getId());
 
         // Assert
         assertNotNull(result);
@@ -257,7 +183,7 @@ class JugadorServiceTest {
 
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> {
-            jugadorService.crearJugador(jugadorInvalido);
+            jugadorService.guardar(jugadorInvalido);
         });
         
         verify(jugadorRepository, never()).save(any());
@@ -272,7 +198,7 @@ class JugadorServiceTest {
 
         // Act & Assert
         assertThrows(RuntimeException.class, () -> {
-            jugadorService.crearJugador(jugadorTest);
+            jugadorService.guardar(jugadorTest);
         });
         
         verify(jugadorRepository).existsByEmail(jugadorTest.getEmail());
