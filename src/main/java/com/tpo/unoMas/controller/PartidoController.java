@@ -23,14 +23,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.bind.annotation.RequestBody;
 
-/**
- * Controller REST para gestión de partidos
- * Implementa los requerimientos del TPO:
- * - RF2: Búsqueda de partidos
- * - RF3: Creación de un partido
- * - RF4: Estado de los partidos
- */
 @RestController
 @RequestMapping("/api/partidos")
 @CrossOrigin(origins = "*")

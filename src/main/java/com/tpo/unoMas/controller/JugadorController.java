@@ -4,6 +4,8 @@ import com.tpo.unoMas.dto.RegistroJugadorRequest;
 import com.tpo.unoMas.dto.JugadorDTO;
 import com.tpo.unoMas.model.Jugador;
 import com.tpo.unoMas.model.Nivel;
+import com.tpo.unoMas.model.Zona;
+import com.tpo.unoMas.repository.ZonaRepository;
 import com.tpo.unoMas.service.JugadorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,11 +16,9 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 
@@ -31,14 +31,21 @@ public class JugadorController {
     @Autowired
     private JugadorService jugadorService;
 
+    @Autowired
+    private ZonaRepository zonaRepository;
+
     @PostMapping("/registro")
     public ResponseEntity<?> registrarJugador(@Valid @RequestBody RegistroJugadorRequest request) {
         try {
+
             Jugador jugador = new Jugador();
             jugador.setNombre(request.getNombre());
             jugador.setEmail(request.getEmail());
             jugador.setTelefono(request.getTelefono());
             jugador.setPassword(request.getPassword());
+            Zona zona = zonaRepository.findById(request.getZonaId())
+                    .orElseThrow(() -> new RuntimeException("Zona no encontrada"));
+            jugador.setZona(zona);
 
             Jugador jugadorGuardado = jugadorService.guardar(jugador);
 
